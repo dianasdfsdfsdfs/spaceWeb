@@ -89,7 +89,7 @@ body {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 5px;
+  padding: 11px 7px 6px;
   backdrop-filter: blur(14px);
   pointer-events: auto;
 }
@@ -122,7 +122,7 @@ body {
 }
 .soon {
   position: absolute;
-  top: -6px;
+  top: -4px;
   right: 4px;
   font-size: 8px;
   letter-spacing: 0.5px;
