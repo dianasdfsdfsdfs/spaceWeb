@@ -75,7 +75,15 @@ export default function App() {
         onPointerUp={onPointerUp}
         onPointerLeave={onPointerUp}
       >
-        <Canvas dpr={[1, 2]} gl={{ antialias: true }}>
+        <Canvas
+          dpr={[1, 1.25]}
+          gl={{ antialias: true, powerPreference: 'high-performance', stencil: false }}
+          performance={{ min: 0.5 }}
+          onCreated={({ gl }) => {
+            // keep the page alive if the GPU drops the context instead of going black
+            gl.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault())
+          }}
+        >
           <color attach="background" args={['#070b22']} />
           <PerspectiveCamera makeDefault position={[0, 0.6, 8.5]} fov={42} />
 
@@ -95,15 +103,16 @@ export default function App() {
             />
           </Suspense>
 
-          <EffectComposer>
+          {/* multisampling 0 = far cheaper on weak/integrated GPUs (no MSAA buffer) */}
+          <EffectComposer multisampling={0}>
             {/* threshold 1.0 -> only the HDR Sun blooms; planets stay crisp/realistic */}
             <Bloom
               mipmapBlur
-              intensity={0.9}
+              intensity={0.85}
               luminanceThreshold={1.0}
               luminanceSmoothing={0.15}
             />
-            <Vignette eskil={false} offset={0.25} darkness={0.6} />
+            <Vignette eskil={false} offset={0.25} darkness={0.55} />
           </EffectComposer>
         </Canvas>
 

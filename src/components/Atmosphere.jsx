@@ -37,7 +37,7 @@ export default function Atmosphere({ radius, color = '#6db3ff', intensity = 0.8,
 
   return (
     <mesh scale={1.06}>
-      <sphereGeometry args={[radius, 48, 48]} />
+      <sphereGeometry args={[radius, 32, 32]} />
       <shaderMaterial
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}

@@ -9,7 +9,6 @@ import {
   ClampToEdgeWrapping,
   SRGBColorSpace,
 } from 'three'
-import Atmosphere from './Atmosphere.jsx'
 
 /**
  * A single celestial body. The OUTER group's transform (position + scale) is
@@ -74,7 +73,7 @@ const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
             onPointerOver={() => (document.body.style.cursor = 'pointer')}
             onPointerOut={() => (document.body.style.cursor = 'default')}
           >
-            <sphereGeometry args={[r, 96, 96]} />
+            <sphereGeometry args={[r, 48, 48]} />
             {body.isStar ? (
               <meshBasicMaterial map={map} color={sunColor} toneMapped={false} />
             ) : (
@@ -85,7 +84,7 @@ const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
           {/* Earth cloud layer */}
           {body.clouds && (
             <mesh ref={cloudRef} scale={1.015}>
-              <sphereGeometry args={[r, 64, 64]} />
+              <sphereGeometry args={[r, 48, 48]} />
               <meshStandardMaterial
                 map={cloudMap}
                 transparent
@@ -110,16 +109,6 @@ const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
           )}
         </group>
       </group>
-
-      {/* Atmospheric rim glow (not for the Sun) */}
-      {!body.isStar && body.atmosphere && (
-        <Atmosphere
-          radius={r}
-          color={body.atmosphere.color}
-          intensity={body.atmosphere.intensity}
-          power={body.atmosphere.power}
-        />
-      )}
     </group>
   )
 })

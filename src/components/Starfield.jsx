@@ -88,14 +88,12 @@ export default function Starfield() {
         />
       </mesh>
 
-      {/* distant coloured nebulae for depth */}
+      {/* distant coloured nebulae for depth (sprites are cheap) */}
       <Nebula position={[-40, 18, -60]} scale={[70, 70, 1]} color="#3b6bff" />
       <Nebula position={[45, -22, -55]} scale={[60, 60, 1]} color="#8a5bff" />
-      <Nebula position={[20, 30, -70]} scale={[50, 50, 1]} color="#2aa9ff" />
 
-      {/* layered starfields: bright near + soft far */}
-      <Stars radius={80} depth={50} count={9000} factor={4.5} saturation={0} fade speed={0.4} />
-      <Stars radius={50} depth={30} count={3500} factor={2.5} saturation={0} fade speed={0.2} />
+      {/* single moderate starfield — plenty of stars, light on the GPU */}
+      <Stars radius={80} depth={50} count={2500} factor={4} saturation={0} fade speed={0.3} />
     </group>
   )
 }
