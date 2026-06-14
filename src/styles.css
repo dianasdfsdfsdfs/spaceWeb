@@ -89,7 +89,7 @@ body {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 11px 7px 6px;
+  padding: 10px 7px;
   backdrop-filter: blur(14px);
   pointer-events: auto;
 }
