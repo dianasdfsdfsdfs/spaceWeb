@@ -45,7 +45,7 @@ export default function Carousel({ activeIndex, focusMode, onSelect }) {
       const targetX = focusMode ? -1.2 : 0
       // and lift it up a bit so the (now larger) focused planet isn't cut off
       // at the bottom of the screen
-      const targetY = focusMode ? 0.65 : 0
+      const targetY = focusMode ? 0.3 : 0
       groupRef.current.position.x = MathUtils.lerp(
         groupRef.current.position.x,
         targetX,
