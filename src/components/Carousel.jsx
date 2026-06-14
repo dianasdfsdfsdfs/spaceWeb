@@ -10,8 +10,8 @@ const STEP = (Math.PI * 2) / BODIES.length
 // --- sizing model ---
 // Focused (front/active) body: ONE big size for every body, so a small planet
 // like Mercury fills the centre just like Jupiter when it's in focus.
-const FOCUS = 1.05
-const CLICK_BOOST = 1.06
+const FOCUS = 1.3
+const CLICK_BOOST = 1.04
 // Background bodies: small, with only a SUBTLE real-size difference, shrinking
 // with depth so the far side of the orbit recedes. Always smaller than FOCUS,
 // so the centred body is never smaller than a big planet in the background.
@@ -42,7 +42,7 @@ export default function Carousel({ activeIndex, focusMode, onSelect }) {
       groupRef.current.rotation.y = rot.current
       // shift the ring left when the info panel is open so the NEXT planet
       // (which flies in from the right) clears the panel and stays visible
-      const targetX = focusMode ? -1.5 : 0
+      const targetX = focusMode ? -1.2 : 0
       groupRef.current.position.x = MathUtils.lerp(
         groupRef.current.position.x,
         targetX,
