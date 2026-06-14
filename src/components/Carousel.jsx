@@ -7,10 +7,17 @@ import { BODIES } from '../data/planets.js'
 const RADIUS = 5
 const STEP = (Math.PI * 2) / BODIES.length
 
-// On-screen target radius (world units) for the focused body vs background bodies.
-const FOCUS_APPARENT = 1.05
-const BG_APPARENT = 0.42
-const CLICK_BOOST = 1.12 // extra growth when a planet is opened (focus mode)
+// --- sizing model ---
+// Real size compressed so big planets / the Sun read a bit larger than small
+// ones (Mercury) without Jupiter filling the whole screen.
+const SIZE_EXP = 0.27
+// Focused (front) body target world-radius; clicking grows it a touch more.
+const FOCUS_K = 1.0
+const CLICK_BOOST = 1.06
+// Background bodies are smaller and shrink with depth, so the far side of the
+// orbit recedes (nearer = bigger, farther = smaller) -> a circular-orbit look.
+const BG_K = 0.5
+const BG_DEPTH_MIN = 0.45
 
 // Normalize an angle to [-PI, PI]
 function wrap(a) {
@@ -49,17 +56,25 @@ export default function Carousel({ activeIndex, focusMode, onSelect }) {
     // dividing out each body's own visualRadius.
     planetRefs.current.forEach((g, i) => {
       if (!g) return
+      const vr = BODIES[i].visualRadius
+      const sizeFactor = Math.pow(vr, SIZE_EXP) // compressed real-size influence
       const worldAngle = wrap(i * STEP + rot.current)
       const frontness = Math.cos(worldAngle) // 1 at front, -1 at back
-      const t = Math.max(0, frontness)
-      const focusT = t * t * t // sharp falloff so only the front body is "big"
+      const depth = (frontness + 1) / 2 // 1 near the front, 0 at the back of the orbit
+      const focusBlend = Math.max(0, frontness) ** 3 // ~1 only at the very front
       const isActive = i === activeIndex
 
-      let apparent = BG_APPARENT + (FOCUS_APPARENT - BG_APPARENT) * focusT
-      if (focusMode && isActive) apparent *= CLICK_BOOST // grow a bit when opened
-      if (focusMode && !isActive) apparent *= 0.85 // keep neighbours clearly visible
+      // focused body keeps a gentle big-vs-small difference (Sun/Jupiter > Mercury)
+      const focusApparent = FOCUS_K * sizeFactor
+      // background bodies shrink with depth -> far side of the orbit recedes
+      const bgApparent =
+        BG_K * sizeFactor * (BG_DEPTH_MIN + (1 - BG_DEPTH_MIN) * depth)
+      let apparent = bgApparent + (focusApparent - bgApparent) * focusBlend
 
-      const targetScale = apparent / BODIES[i].visualRadius
+      if (focusMode && isActive) apparent *= CLICK_BOOST // grow a bit when opened
+      if (focusMode && !isActive) apparent *= 0.9 // keep neighbours clearly visible
+
+      const targetScale = apparent / vr
       g.scale.setScalar(MathUtils.lerp(g.scale.x, targetScale, 0.15))
 
       // place on the circle (in the group's local frame)
