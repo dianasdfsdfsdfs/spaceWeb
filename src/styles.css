@@ -160,6 +160,11 @@ body {
 }
 .nav-arrow.right {
   right: 26px;
+  transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, box-shadow 0.2s;
+}
+/* when the info panel is open, move the "next" arrow to the left of the panel */
+.nav-arrow.right.shifted {
+  right: calc(min(410px, 92vw) + 22px);
 }
 
 /* ---------- Title card ---------- */
@@ -265,12 +270,12 @@ body {
   top: 0;
   right: 0;
   height: 100%;
-  width: min(440px, 92vw);
+  width: min(410px, 92vw);
   z-index: 18;
   background: linear-gradient(
     180deg,
-    rgba(12, 16, 32, 0.92),
-    rgba(8, 10, 22, 0.96)
+    rgba(11, 15, 31, 0.97),
+    rgba(7, 9, 20, 0.98)
   );
   border-left: 1px solid var(--border);
   /* small blur only on a GPU layer -> smooth scrolling */

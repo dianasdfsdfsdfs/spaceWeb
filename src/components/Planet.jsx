@@ -9,7 +9,6 @@ import {
   ClampToEdgeWrapping,
   SRGBColorSpace,
 } from 'three'
-
 /**
  * A single celestial body. The OUTER group's transform (position + scale) is
  * driven imperatively by the Carousel each frame, so we just forward a ref to
@@ -17,19 +16,24 @@ import {
  */
 const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
   const spinRef = useRef()
-  const cloudRef = useRef()
 
   const map = useLoader(TextureLoader, body.texture)
   const cloudMap = useLoader(TextureLoader, body.clouds || body.texture)
   const ringMap = useLoader(TextureLoader, body.ring || body.texture)
 
   map.colorSpace = SRGBColorSpace
+  // sharper textures at grazing angles -> more realistic
+  if (map.anisotropy !== 8) {
+    map.anisotropy = 8
+    map.needsUpdate = true
+  }
 
   const r = body.visualRadius
 
+  // The cloud layer is a child of the spin group, so it already rotates WITH
+  // the planet at exactly the same speed (no separate cloud rotation).
   useFrame((_, delta) => {
-    if (spinRef.current) spinRef.current.rotation.y += body.rotationSpeed * delta * 2
-    if (cloudRef.current) cloudRef.current.rotation.y += body.rotationSpeed * delta * 2.6
+    if (spinRef.current) spinRef.current.rotation.y += body.rotationSpeed * delta * 1.3
   })
 
   // HDR warm colour pushes the Sun above the bloom threshold so it glows naturally.
@@ -81,9 +85,9 @@ const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
             )}
           </mesh>
 
-          {/* Earth cloud layer */}
+          {/* Earth cloud layer (rotates with the planet) */}
           {body.clouds && (
-            <mesh ref={cloudRef} scale={1.015}>
+            <mesh scale={1.015}>
               <sphereGeometry args={[r, 48, 48]} />
               <meshStandardMaterial
                 map={cloudMap}

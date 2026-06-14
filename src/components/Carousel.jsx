@@ -8,8 +8,9 @@ const RADIUS = 5
 const STEP = (Math.PI * 2) / BODIES.length
 
 // On-screen target radius (world units) for the focused body vs background bodies.
-const FOCUS_APPARENT = 0.95
+const FOCUS_APPARENT = 1.05
 const BG_APPARENT = 0.42
+const CLICK_BOOST = 1.12 // extra growth when a planet is opened (focus mode)
 
 // Normalize an angle to [-PI, PI]
 function wrap(a) {
@@ -32,8 +33,9 @@ export default function Carousel({ activeIndex, focusMode, onSelect }) {
 
     if (groupRef.current) {
       groupRef.current.rotation.y = rot.current
-      // slide the whole ring left when an info panel is open
-      const targetX = focusMode ? -2.1 : 0
+      // shift the ring left when the info panel is open so the NEXT planet
+      // (which flies in from the right) clears the panel and stays visible
+      const targetX = focusMode ? -1.5 : 0
       groupRef.current.position.x = MathUtils.lerp(
         groupRef.current.position.x,
         targetX,
@@ -54,7 +56,8 @@ export default function Carousel({ activeIndex, focusMode, onSelect }) {
       const isActive = i === activeIndex
 
       let apparent = BG_APPARENT + (FOCUS_APPARENT - BG_APPARENT) * focusT
-      if (focusMode && !isActive) apparent *= 0.5 // push others further back
+      if (focusMode && isActive) apparent *= CLICK_BOOST // grow a bit when opened
+      if (focusMode && !isActive) apparent *= 0.85 // keep neighbours clearly visible
 
       const targetScale = apparent / BODIES[i].visualRadius
       g.scale.setScalar(MathUtils.lerp(g.scale.x, targetScale, 0.15))

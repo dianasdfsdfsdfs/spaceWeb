@@ -1,12 +1,7 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Stars } from '@react-three/drei'
-import {
-  BackSide,
-  Color,
-  AdditiveBlending,
-  CanvasTexture,
-} from 'three'
+import { BackSide, Color } from 'three'
 
 // Deep-blue gradient sky dome (brighter & bluer than a flat black background).
 const skyVert = /* glsl */ `
@@ -27,39 +22,7 @@ const skyFrag = /* glsl */ `
   }
 `
 
-// Build a soft radial-gradient sprite for nebula clouds.
-function makeNebulaTexture(hex) {
-  const size = 256
-  const cvs = document.createElement('canvas')
-  cvs.width = cvs.height = size
-  const ctx = cvs.getContext('2d')
-  const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
-  const c = new Color(hex)
-  const rgb = `${Math.round(c.r * 255)}, ${Math.round(c.g * 255)}, ${Math.round(c.b * 255)}`
-  g.addColorStop(0, `rgba(${rgb}, 0.55)`)
-  g.addColorStop(0.4, `rgba(${rgb}, 0.22)`)
-  g.addColorStop(1, `rgba(${rgb}, 0)`)
-  ctx.fillStyle = g
-  ctx.fillRect(0, 0, size, size)
-  return new CanvasTexture(cvs)
-}
-
-function Nebula({ position, scale, color }) {
-  const tex = useMemo(() => makeNebulaTexture(color), [color])
-  return (
-    <sprite position={position} scale={scale}>
-      <spriteMaterial
-        map={tex}
-        blending={AdditiveBlending}
-        depthWrite={false}
-        opacity={0.9}
-      />
-    </sprite>
-  )
-}
-
 export default function Starfield() {
-  const skyRef = useRef()
   const groupRef = useRef()
 
   const skyUniforms = useMemo(
@@ -77,7 +40,7 @@ export default function Starfield() {
   return (
     <group ref={groupRef}>
       {/* gradient sky dome */}
-      <mesh ref={skyRef}>
+      <mesh>
         <sphereGeometry args={[100, 32, 32]} />
         <shaderMaterial
           vertexShader={skyVert}
@@ -88,11 +51,7 @@ export default function Starfield() {
         />
       </mesh>
 
-      {/* distant coloured nebulae for depth (sprites are cheap) */}
-      <Nebula position={[-40, 18, -60]} scale={[70, 70, 1]} color="#3b6bff" />
-      <Nebula position={[45, -22, -55]} scale={[60, 60, 1]} color="#8a5bff" />
-
-      {/* single moderate starfield — plenty of stars, light on the GPU */}
+      {/* clean starfield */}
       <Stars radius={80} depth={50} count={2500} factor={4} saturation={0} fade speed={0.3} />
     </group>
   )

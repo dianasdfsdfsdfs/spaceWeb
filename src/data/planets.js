@@ -109,7 +109,7 @@ export const BODIES = [
     color: '#4f7cff',
     atmosphere: { color: '#6db3ff', intensity: 1.0, power: 2.6 },
     visualRadius: 0.82,
-    rotationSpeed: 0.12,
+    rotationSpeed: 0.085,
     axialTilt: 0.409, // 23.4°
     facts: {
       Type: 'Terrestrial planet (our home)',
@@ -174,7 +174,7 @@ export const BODIES = [
     color: '#d8ca9d',
     atmosphere: { color: '#e8d3a8', intensity: 0.55, power: 3.0 },
     visualRadius: 1.7,
-    rotationSpeed: 0.22,
+    rotationSpeed: 0.1,
     axialTilt: 0.0546, // 3.1°
     facts: {
       Type: 'Gas giant',
@@ -208,7 +208,7 @@ export const BODIES = [
     color: '#e3cda0',
     atmosphere: { color: '#efd9a8', intensity: 0.5, power: 3.0 },
     visualRadius: 1.45,
-    rotationSpeed: 0.2,
+    rotationSpeed: 0.12,
     axialTilt: 0.466, // 26.7°
     facts: {
       Type: 'Gas giant',
@@ -241,7 +241,7 @@ export const BODIES = [
     color: '#9fe3e0',
     atmosphere: { color: '#a6f0ec', intensity: 0.75, power: 2.8 },
     visualRadius: 1.05,
-    rotationSpeed: -0.14, // retrograde
+    rotationSpeed: -0.1, // retrograde
     axialTilt: 1.706, // 97.8° — rolls on its side
     facts: {
       Type: 'Ice giant',
@@ -274,7 +274,7 @@ export const BODIES = [
     color: '#3b5bdb',
     atmosphere: { color: '#4f7dff', intensity: 0.85, power: 2.7 },
     visualRadius: 1.02,
-    rotationSpeed: 0.15,
+    rotationSpeed: 0.11,
     axialTilt: 0.494, // 28.3°
     facts: {
       Type: 'Ice giant',

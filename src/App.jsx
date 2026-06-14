@@ -87,12 +87,13 @@ export default function App() {
           <color attach="background" args={['#070b22']} />
           <PerspectiveCamera makeDefault position={[0, 0.6, 8.5]} fov={42} />
 
-          {/* Bright, even lighting so every world is clearly visible, while a
-              stronger key light from the side keeps a realistic day/night curve. */}
-          <ambientLight intensity={0.85} />
-          <hemisphereLight args={['#9fb4ff', '#202840', 0.6]} />
-          <directionalLight position={[5, 3, 6]} intensity={2.0} />
-          <directionalLight position={[-6, -1, 3]} intensity={0.5} color="#7d93ff" />
+          {/* A strong key light gives a realistic day/night terminator (like the
+              reference photos); ambient + a soft fill keep the night side visible
+              rather than pitch black. */}
+          <ambientLight intensity={0.55} />
+          <hemisphereLight args={['#9fb4ff', '#1a2038', 0.4]} />
+          <directionalLight position={[5, 2.5, 6]} intensity={2.6} />
+          <directionalLight position={[-6, -1, 2]} intensity={0.35} color="#7d93ff" />
 
           <Suspense fallback={null}>
             <Starfield />
@@ -122,7 +123,11 @@ export default function App() {
         <button className="nav-arrow left" onClick={() => change(-1)} aria-label="Previous">
           ‹
         </button>
-        <button className="nav-arrow right" onClick={() => change(1)} aria-label="Next">
+        <button
+          className={`nav-arrow right ${focusMode ? 'shifted' : ''}`}
+          onClick={() => change(1)}
+          aria-label="Next"
+        >
           ›
         </button>
 
