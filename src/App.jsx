@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { PerspectiveCamera } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
@@ -76,12 +76,15 @@ export default function App() {
         onPointerLeave={onPointerUp}
       >
         <Canvas dpr={[1, 2]} gl={{ antialias: true }}>
-          <color attach="background" args={['#05060d']} />
+          <color attach="background" args={['#070b22']} />
           <PerspectiveCamera makeDefault position={[0, 0.6, 8.5]} fov={42} />
 
-          <ambientLight intensity={0.35} />
-          <pointLight position={[6, 4, 8]} intensity={2.2} />
-          <pointLight position={[-8, -2, 2]} intensity={0.5} color="#5577ff" />
+          {/* Bright, even lighting so every world is clearly visible, while a
+              stronger key light from the side keeps a realistic day/night curve. */}
+          <ambientLight intensity={0.85} />
+          <hemisphereLight args={['#9fb4ff', '#202840', 0.6]} />
+          <directionalLight position={[5, 3, 6]} intensity={2.0} />
+          <directionalLight position={[-6, -1, 3]} intensity={0.5} color="#7d93ff" />
 
           <Suspense fallback={null}>
             <Starfield />
@@ -93,13 +96,14 @@ export default function App() {
           </Suspense>
 
           <EffectComposer>
+            {/* threshold 1.0 -> only the HDR Sun blooms; planets stay crisp/realistic */}
             <Bloom
               mipmapBlur
-              intensity={0.7}
-              luminanceThreshold={0.35}
-              luminanceSmoothing={0.2}
+              intensity={0.9}
+              luminanceThreshold={1.0}
+              luminanceSmoothing={0.15}
             />
-            <Vignette eskil={false} offset={0.2} darkness={0.85} />
+            <Vignette eskil={false} offset={0.25} darkness={0.6} />
           </EffectComposer>
         </Canvas>
 

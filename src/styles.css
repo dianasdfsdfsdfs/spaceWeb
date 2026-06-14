@@ -273,11 +273,35 @@ body {
     rgba(8, 10, 22, 0.96)
   );
   border-left: 1px solid var(--border);
-  backdrop-filter: blur(18px);
+  /* small blur only on a GPU layer -> smooth scrolling */
+  backdrop-filter: blur(6px);
   box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
-  padding: 70px 34px 40px;
+  padding: 104px 34px 48px;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  will-change: transform;
   animation: slideIn 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* slim, smooth custom scrollbar */
+.info-panel::-webkit-scrollbar {
+  width: 8px;
+}
+.info-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+.info-panel::-webkit-scrollbar-thumb {
+  background: rgba(140, 160, 220, 0.3);
+  border-radius: 8px;
+}
+.info-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 160, 220, 0.55);
+}
+.info-panel {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(140, 160, 220, 0.3) transparent;
 }
 @keyframes slideIn {
   from { transform: translateX(40px); opacity: 0; }
@@ -286,7 +310,7 @@ body {
 
 .info-close {
   position: absolute;
-  top: 22px;
+  top: 70px;
   right: 24px;
   width: 36px;
   height: 36px;

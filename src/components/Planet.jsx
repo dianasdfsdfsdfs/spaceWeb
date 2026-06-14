@@ -1,6 +1,15 @@
 import { forwardRef, useMemo, useRef } from 'react'
 import { useFrame, useLoader } from '@react-three/fiber'
-import { TextureLoader, DoubleSide, AdditiveBlending, BackSide } from 'three'
+import {
+  TextureLoader,
+  DoubleSide,
+  RingGeometry,
+  Vector3,
+  Color,
+  ClampToEdgeWrapping,
+  SRGBColorSpace,
+} from 'three'
+import Atmosphere from './Atmosphere.jsx'
 
 /**
  * A single celestial body. The OUTER group's transform (position + scale) is
@@ -12,8 +21,10 @@ const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
   const cloudRef = useRef()
 
   const map = useLoader(TextureLoader, body.texture)
-  const cloudMap = body.clouds ? useLoader(TextureLoader, body.clouds) : null
-  const ringMap = body.ring ? useLoader(TextureLoader, body.ring) : null
+  const cloudMap = useLoader(TextureLoader, body.clouds || body.texture)
+  const ringMap = useLoader(TextureLoader, body.ring || body.texture)
+
+  map.colorSpace = SRGBColorSpace
 
   const r = body.visualRadius
 
@@ -22,13 +33,33 @@ const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
     if (cloudRef.current) cloudRef.current.rotation.y += body.rotationSpeed * delta * 2.6
   })
 
-  const material = useMemo(() => {
-    if (body.isStar) {
-      // The Sun glows on its own — emissive so bloom picks it up.
-      return <meshBasicMaterial map={map} toneMapped={false} />
+  // HDR warm colour pushes the Sun above the bloom threshold so it glows naturally.
+  const sunColor = useMemo(() => new Color(2.6, 1.9, 1.25), [])
+
+  // Saturn's ring needs custom UVs: the strip texture must map radially
+  // (inner edge -> outer edge), not be planar-projected.
+  const ringGeometry = useMemo(() => {
+    if (!body.ring) return null
+    const inner = r * 1.28
+    const outer = r * 2.3
+    const geo = new RingGeometry(inner, outer, 160, 1)
+    const pos = geo.attributes.position
+    const uv = geo.attributes.uv
+    const v = new Vector3()
+    for (let i = 0; i < pos.count; i++) {
+      v.fromBufferAttribute(pos, i)
+      const t = (v.length() - inner) / (outer - inner)
+      uv.setXY(i, t, 0.5)
     }
-    return <meshStandardMaterial map={map} roughness={1} metalness={0} />
-  }, [map, body.isStar])
+    uv.needsUpdate = true
+    return geo
+  }, [body.ring, r])
+
+  if (body.ring) {
+    ringMap.colorSpace = SRGBColorSpace
+    ringMap.wrapS = ClampToEdgeWrapping
+    ringMap.wrapT = ClampToEdgeWrapping
+  }
 
   return (
     <group ref={ref}>
@@ -43,51 +74,51 @@ const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
             onPointerOver={() => (document.body.style.cursor = 'pointer')}
             onPointerOut={() => (document.body.style.cursor = 'default')}
           >
-            <sphereGeometry args={[r, 64, 64]} />
-            {material}
+            <sphereGeometry args={[r, 96, 96]} />
+            {body.isStar ? (
+              <meshBasicMaterial map={map} color={sunColor} toneMapped={false} />
+            ) : (
+              <meshStandardMaterial map={map} roughness={0.92} metalness={0.02} />
+            )}
           </mesh>
 
           {/* Earth cloud layer */}
-          {cloudMap && (
-            <mesh ref={cloudRef} scale={1.012}>
-              <sphereGeometry args={[r, 48, 48]} />
+          {body.clouds && (
+            <mesh ref={cloudRef} scale={1.015}>
+              <sphereGeometry args={[r, 64, 64]} />
               <meshStandardMaterial
                 map={cloudMap}
                 transparent
-                opacity={0.45}
+                opacity={0.5}
                 depthWrite={false}
               />
             </mesh>
           )}
 
           {/* Saturn's rings */}
-          {ringMap && (
-            <mesh rotation={[Math.PI / 2, 0, 0]}>
-              <ringGeometry args={[r * 1.35, r * 2.3, 90]} />
-              <meshBasicMaterial
+          {ringGeometry && (
+            <mesh geometry={ringGeometry} rotation={[Math.PI / 2.05, 0, 0]}>
+              <meshStandardMaterial
                 map={ringMap}
                 side={DoubleSide}
                 transparent
-                opacity={0.95}
+                alphaTest={0.02}
+                roughness={1}
+                depthWrite={false}
               />
             </mesh>
           )}
         </group>
       </group>
 
-      {/* Soft glow halo for the Sun */}
-      {body.isStar && (
-        <mesh scale={1.35}>
-          <sphereGeometry args={[r, 32, 32]} />
-          <meshBasicMaterial
-            color={body.color}
-            transparent
-            opacity={0.25}
-            side={BackSide}
-            blending={AdditiveBlending}
-            depthWrite={false}
-          />
-        </mesh>
+      {/* Atmospheric rim glow (not for the Sun) */}
+      {!body.isStar && body.atmosphere && (
+        <Atmosphere
+          radius={r}
+          color={body.atmosphere.color}
+          intensity={body.atmosphere.intensity}
+          power={body.atmosphere.power}
+        />
       )}
     </group>
   )
