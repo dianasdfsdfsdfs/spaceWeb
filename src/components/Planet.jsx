@@ -9,8 +9,6 @@ import {
   ClampToEdgeWrapping,
   SRGBColorSpace,
 } from 'three'
-import Atmosphere from './Atmosphere.jsx'
-
 /**
  * A single celestial body. The OUTER group's transform (position + scale) is
  * driven imperatively by the Carousel each frame, so we just forward a ref to
@@ -113,17 +111,6 @@ const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
           )}
         </group>
       </group>
-
-      {/* Soft atmospheric rim — only on bodies that have a real one (e.g. Earth) */}
-      {!body.isStar && body.atmosphere && (
-        <Atmosphere
-          radius={r}
-          color={body.atmosphere.color}
-          intensity={body.atmosphere.intensity}
-          power={body.atmosphere.power}
-          scale={body.atmosphere.scale}
-        />
-      )}
     </group>
   )
 })
