@@ -48,6 +48,8 @@ export const COSMIC = [
   {
     id: 'quasar',
     type: 'quasar',
+    image: '/textures/cosmic/quasar.jpg',
+    photoSize: 3.8,
     name: 'Quasar',
     subtitle: 'Blazing Galactic Core',
     accent: '#ff9a4d',
@@ -112,6 +114,8 @@ export const COSMIC = [
   {
     id: 'kilonova',
     type: 'kilonova',
+    image: '/textures/cosmic/kilonova.jpg',
+    photoSize: 3.4,
     name: 'Kilonova',
     subtitle: 'Neutron Star Collision',
     accent: '#9ad6ff',
@@ -144,6 +148,8 @@ export const COSMIC = [
   {
     id: 'magnetar',
     type: 'magnetar',
+    image: '/textures/cosmic/magnetar.jpg',
+    photoSize: 3.9,
     name: 'Magnetar',
     subtitle: 'Magnetic Monster Star',
     accent: '#4aa8ff',
@@ -176,6 +182,9 @@ export const COSMIC = [
   {
     id: 'nebula',
     type: 'nebula',
+    image: '/textures/cosmic/nebula.jpg',
+    photoSize: 6.1,
+    spin: 0.04,
     name: 'Ring Nebula',
     subtitle: 'A Dying Star’s Shell',
     accent: '#ff8a3d',

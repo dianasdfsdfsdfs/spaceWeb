@@ -4,19 +4,13 @@ import { PerspectiveCamera } from '@react-three/drei'
 import { Vector3 } from 'three'
 import { COSMIC } from '../data/cosmicObjects.js'
 import BlackHole from './cosmic/BlackHole.jsx'
-import Quasar from './cosmic/Quasar.jsx'
 import Pulsar from './cosmic/Pulsar.jsx'
-import Kilonova from './cosmic/Kilonova.jsx'
-import Magnetar from './cosmic/Magnetar.jsx'
-import Nebula from './cosmic/Nebula.jsx'
+import PhotoObject from './cosmic/PhotoObject.jsx'
 
+// Procedural objects (the rest use real photos via PhotoObject).
 const COMPONENTS = {
   blackhole: BlackHole,
-  quasar: Quasar,
   pulsar: Pulsar,
-  kilonova: Kilonova,
-  magnetar: Magnetar,
-  nebula: Nebula,
 }
 
 const OVERVIEW_POS = new Vector3(0, 0.5, 15)
@@ -75,7 +69,11 @@ export default function CosmicScene({ focus, onSelect, onHover }) {
               document.body.style.cursor = 'default'
             }}
           >
-            <C />
+            {o.image ? (
+              <PhotoObject src={o.image} size={o.photoSize} spin={o.spin || 0} />
+            ) : (
+              <C />
+            )}
             {/* invisible, raycastable hit area for reliable clicking */}
             <mesh>
               <sphereGeometry args={[2.2, 16, 16]} />
