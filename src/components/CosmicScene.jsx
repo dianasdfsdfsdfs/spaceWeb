@@ -19,7 +19,6 @@ const OVERVIEW_LOOK = new Vector3(0, -0.5, -12)
 // Smoothly flies the camera between the scattered overview and a focused object.
 function Rig({ focus }) {
   const cam = useThree((s) => s.camera)
-  const size = useThree((s) => s.size)
   const look = useRef(OVERVIEW_LOOK.clone())
   const dPos = useRef(new Vector3())
   const dLook = useRef(new Vector3())
@@ -30,15 +29,13 @@ function Rig({ focus }) {
       dLook.current.copy(OVERVIEW_LOOK)
     } else {
       const o = COSMIC[focus]
-      // Aim the camera right of the object by exactly half the info-panel's
-      // angular width, so the object ends up centred in the screen area that is
-      // NOT covered by the panel (works at any window size).
-      const panelW = Math.min(410, size.width * 0.92)
-      const tanHalfFov = Math.tan((cam.fov * Math.PI) / 360)
-      const offX = (o.focusDist * tanHalfFov * panelW) / size.height
+      // Camera straight in front of the object; we AIM a little to the right of
+      // it so the object shifts left on screen and sits centred in the area NOT
+      // covered by the info panel (rather than dead-centre under the panel).
       const lift = o.focusLift || 0
       dPos.current.set(o.position[0], o.position[1], o.position[2] + o.focusDist)
-      dLook.current.set(o.position[0] + offX, o.position[1] - lift, o.position[2])
+      // aim a touch right (object reads left-of-panel) and below (raises it on screen)
+      dLook.current.set(o.position[0] + o.focusDist * 0.085, o.position[1] - lift, o.position[2])
     }
     // ease in a touch faster than we ease back out (smoother, less abrupt return)
     const k = focus == null ? 0.025 : 0.05
