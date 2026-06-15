@@ -19,8 +19,8 @@ const COMPONENTS = {
   nebula: Nebula,
 }
 
-const OVERVIEW_POS = new Vector3(0, 1, 13)
-const OVERVIEW_LOOK = new Vector3(0, 0, -12)
+const OVERVIEW_POS = new Vector3(0, 0.5, 15)
+const OVERVIEW_LOOK = new Vector3(0, -0.5, -12)
 
 // Smoothly flies the camera between the scattered overview and a focused object.
 function Rig({ focus }) {
@@ -36,8 +36,13 @@ function Rig({ focus }) {
     } else {
       const o = COSMIC[focus]
       // sit slightly to the right of the object so it reads left-of-centre
-      // (leaving room for the info panel), and `focusDist` in front of it
-      dPos.current.set(o.position[0] + 1.4, o.position[1] + 0.35, o.position[2] + o.focusDist)
+      // (leaving room for the info panel), and `focusDist` in front of it.
+      // Offsets scale with focusDist to keep consistent framing.
+      dPos.current.set(
+        o.position[0] + o.focusDist * 0.2,
+        o.position[1] + o.focusDist * 0.06,
+        o.position[2] + o.focusDist,
+      )
       dLook.current.set(o.position[0], o.position[1], o.position[2])
     }
     cam.position.lerp(dPos.current, 0.045)
