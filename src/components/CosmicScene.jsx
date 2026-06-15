@@ -5,12 +5,14 @@ import { Vector3 } from 'three'
 import { COSMIC } from '../data/cosmicObjects.js'
 import BlackHole from './cosmic/BlackHole.jsx'
 import Pulsar from './cosmic/Pulsar.jsx'
+import Quasar from './cosmic/Quasar.jsx'
 import PhotoObject from './cosmic/PhotoObject.jsx'
 
 // Procedural objects (the rest use real photos via PhotoObject).
 const COMPONENTS = {
   blackhole: BlackHole,
   pulsar: Pulsar,
+  quasar: Quasar,
 }
 
 const OVERVIEW_POS = new Vector3(0, 0.5, 15)
@@ -52,32 +54,32 @@ export default function CosmicScene({ focus, onSelect, onHover }) {
       {COSMIC.map((o, i) => {
         const C = COMPONENTS[o.type]
         return (
-          <group
-            key={o.id}
-            position={o.position}
-            onClick={(e) => {
-              e.stopPropagation()
-              onSelect(i)
-            }}
-            onPointerOver={(e) => {
-              e.stopPropagation()
-              onHover(i)
-              document.body.style.cursor = 'pointer'
-            }}
-            onPointerOut={() => {
-              onHover(null)
-              document.body.style.cursor = 'default'
-            }}
-          >
+          <group key={o.id} position={o.position}>
+            {/* Visuals carry NO event handlers, so clicks fall through to the
+                canvas' onPointerMissed (which exits focus). */}
             {o.image ? (
               <PhotoObject src={o.image} size={o.photoSize} spin={o.spin || 0} photoKey={o.photoKey} />
             ) : (
               <C />
             )}
-            {/* invisible, raycastable hit area. Large for easy selecting in the
-                overview, but tiny when focused so a click anywhere but the centre
-                misses -> exits focus. */}
-            <mesh>
+            {/* The ONLY clickable target: a generous sphere in the overview (easy
+                to select), shrunk to the centre when focused so clicking anywhere
+                else exits focus. */}
+            <mesh
+              onClick={(e) => {
+                e.stopPropagation()
+                onSelect(i)
+              }}
+              onPointerOver={(e) => {
+                e.stopPropagation()
+                onHover(i)
+                document.body.style.cursor = 'pointer'
+              }}
+              onPointerOut={() => {
+                onHover(null)
+                document.body.style.cursor = 'default'
+              }}
+            >
               <sphereGeometry args={[focus === i ? 0.8 : 2.2, 16, 16]} />
               <meshBasicMaterial transparent opacity={0} depthWrite={false} />
             </mesh>

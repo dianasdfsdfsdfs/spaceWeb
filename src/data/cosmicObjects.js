@@ -48,14 +48,11 @@ export const COSMIC = [
   {
     id: 'quasar',
     type: 'quasar',
-    image: '/textures/cosmic/quasar.jpg',
-    photoSize: 3.8,
-    photoKey: { lo: 0.05, hi: 0.26, inner: 0.42, outer: 0.68 },
     name: 'Quasar',
     subtitle: 'Blazing Galactic Core',
     accent: '#ff9a4d',
     position: [-15, 6.5, -15],
-    focusDist: 4.0,
+    focusDist: 3.0,
     facts: {
       Type: 'Active galactic nucleus',
       'Powered by': 'A feeding supermassive black hole',
