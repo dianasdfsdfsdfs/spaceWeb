@@ -70,13 +70,15 @@ export default function CosmicScene({ focus, onSelect, onHover }) {
             }}
           >
             {o.image ? (
-              <PhotoObject src={o.image} size={o.photoSize} spin={o.spin || 0} />
+              <PhotoObject src={o.image} size={o.photoSize} spin={o.spin || 0} photoKey={o.photoKey} />
             ) : (
               <C />
             )}
-            {/* invisible, raycastable hit area for reliable clicking */}
+            {/* invisible, raycastable hit area. Large for easy selecting in the
+                overview, but tiny when focused so a click anywhere but the centre
+                misses -> exits focus. */}
             <mesh>
-              <sphereGeometry args={[2.2, 16, 16]} />
+              <sphereGeometry args={[focus === i ? 0.8 : 2.2, 16, 16]} />
               <meshBasicMaterial transparent opacity={0} depthWrite={false} />
             </mesh>
           </group>
