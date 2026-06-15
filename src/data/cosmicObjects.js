@@ -15,7 +15,7 @@ export const COSMIC = [
     subtitle: 'Gravitational Singularity',
     accent: '#ff7a2f',
     position: [-1, 1.5, -8],
-    focusDist: 5.2,
+    focusDist: 4.5,
     facts: {
       Type: 'Stellar / supermassive black hole',
       'Escape velocity': 'Greater than the speed of light',
@@ -52,7 +52,7 @@ export const COSMIC = [
     subtitle: 'Blazing Galactic Core',
     accent: '#ff9a4d',
     position: [-15, 6.5, -15],
-    focusDist: 4.6,
+    focusDist: 4.0,
     facts: {
       Type: 'Active galactic nucleus',
       'Powered by': 'A feeding supermassive black hole',
@@ -84,7 +84,7 @@ export const COSMIC = [
     subtitle: 'Spinning Neutron Star',
     accent: '#7fd0ff',
     position: [14, 5, -13],
-    focusDist: 3.6,
+    focusDist: 3.1,
     facts: {
       Type: 'Rotating neutron star',
       Diameter: 'Only ~20 km across',
@@ -116,7 +116,7 @@ export const COSMIC = [
     subtitle: 'Neutron Star Collision',
     accent: '#9ad6ff',
     position: [-13, -7, -16],
-    focusDist: 4.2,
+    focusDist: 3.6,
     facts: {
       Type: 'Merger of two neutron stars',
       Brightness: '~1,000× a normal nova',
@@ -148,7 +148,7 @@ export const COSMIC = [
     subtitle: 'Magnetic Monster Star',
     accent: '#4aa8ff',
     position: [15, -6, -19],
-    focusDist: 4.8,
+    focusDist: 4.1,
     facts: {
       Type: 'Ultra-magnetic neutron star',
       'Magnetic field': 'The strongest in the universe',
@@ -180,7 +180,7 @@ export const COSMIC = [
     subtitle: 'A Dying Star’s Shell',
     accent: '#ff8a3d',
     position: [4, -9, -21],
-    focusDist: 7.5,
+    focusDist: 6.4,
     facts: {
       Type: 'Planetary nebula',
       Distance: '~2,600 light-years away',

@@ -1,44 +1,14 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { AdditiveBlending, TubeGeometry, CatmullRomCurve3, Vector3 } from 'three'
-import { Glow, hdr, NOISE_GLSL } from './shared.jsx'
+import StarSurface from './StarSurface.jsx'
+import { Glow, hdr } from './shared.jsx'
 
 const FIELD = hdr(1.5, 2.3, 3.7)
 const COMPANION = hdr(2.0, 2.4, 3.2)
 
-// bright, mottled blue-white star surface with a glowing limb
-const vert = /* glsl */ `
-  varying vec3 vp;
-  varying vec3 vn;
-  varying vec3 vview;
-  void main() {
-    vp = position;
-    vn = normalize(normalMatrix * normal);
-    vec4 mv = modelViewMatrix * vec4(position, 1.0);
-    vview = normalize(-mv.xyz);
-    gl_Position = projectionMatrix * mv;
-  }
-`
-const frag = /* glsl */ `
-  uniform float uTime;
-  varying vec3 vp;
-  varying vec3 vn;
-  varying vec3 vview;
-  ${NOISE_GLSL}
-  void main() {
-    vec3 p = normalize(vp);
-    float n = fbm(p.xy * 4.0 + uTime * 0.25) * 0.6 + fbm(p.zy * 5.0 - uTime * 0.2) * 0.4;
-    float rim = pow(1.0 - max(dot(vn, vview), 0.0), 2.0);
-    vec3 col = mix(vec3(0.4, 0.85, 1.7), vec3(1.7, 2.1, 2.9), n);
-    float b = 0.7 + 0.7 * n + rim * 1.3;
-    gl_FragColor = vec4(col * b, 1.0);
-  }
-`
-
 export default function Magnetar() {
-  const mat = useRef()
   const cage = useRef()
-  const uniforms = useMemo(() => ({ uTime: { value: 0 } }), [])
 
   // one dipole field-line loop (pinched at the poles, bulging at the equator)
   const loop = useMemo(() => {
@@ -53,17 +23,13 @@ export default function Magnetar() {
   }, [])
 
   useFrame((_, dt) => {
-    if (mat.current) mat.current.uniforms.uTime.value += dt
     if (cage.current) cage.current.rotation.y += dt * 0.15
   })
 
   return (
     <group rotation={[0.2, 0, 0.12]}>
-      {/* star */}
-      <mesh>
-        <sphereGeometry args={[0.6, 96, 96]} />
-        <shaderMaterial ref={mat} vertexShader={vert} fragmentShader={frag} uniforms={uniforms} toneMapped={false} />
-      </mesh>
+      {/* bright blue-white star */}
+      <StarSurface radius={0.6} low={[0.4, 0.85, 1.7]} high={[1.7, 2.1, 2.9]} base={0.7} amp={0.65} rim={1.3} turb={4.0} />
 
       {/* magnetic field-line cage */}
       <group ref={cage}>

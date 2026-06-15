@@ -35,15 +35,11 @@ function Rig({ focus }) {
       dLook.current.copy(OVERVIEW_LOOK)
     } else {
       const o = COSMIC[focus]
-      // sit slightly to the right of the object so it reads left-of-centre
-      // (leaving room for the info panel), and `focusDist` in front of it.
-      // Offsets scale with focusDist to keep consistent framing.
-      dPos.current.set(
-        o.position[0] + o.focusDist * 0.2,
-        o.position[1] + o.focusDist * 0.06,
-        o.position[2] + o.focusDist,
-      )
-      dLook.current.set(o.position[0], o.position[1], o.position[2])
+      // Camera straight in front of the object; we AIM a little to the right of
+      // it so the object shifts left on screen and sits centred in the area NOT
+      // covered by the info panel (rather than dead-centre under the panel).
+      dPos.current.set(o.position[0], o.position[1], o.position[2] + o.focusDist)
+      dLook.current.set(o.position[0] + o.focusDist * 0.085, o.position[1], o.position[2])
     }
     cam.position.lerp(dPos.current, 0.045)
     look.current.lerp(dLook.current, 0.045)
