@@ -5,14 +5,12 @@ import { Vector3 } from 'three'
 import { COSMIC } from '../data/cosmicObjects.js'
 import BlackHole from './cosmic/BlackHole.jsx'
 import Pulsar from './cosmic/Pulsar.jsx'
-import Quasar from './cosmic/Quasar.jsx'
 import PhotoObject from './cosmic/PhotoObject.jsx'
 
 // Procedural objects (the rest use real photos via PhotoObject).
 const COMPONENTS = {
   blackhole: BlackHole,
   pulsar: Pulsar,
-  quasar: Quasar,
 }
 
 const OVERVIEW_POS = new Vector3(0, 0.5, 15)
@@ -58,7 +56,7 @@ export default function CosmicScene({ focus, onSelect, onHover }) {
             {/* Visuals carry NO event handlers, so clicks fall through to the
                 canvas' onPointerMissed (which exits focus). */}
             {o.image ? (
-              <PhotoObject src={o.image} size={o.photoSize} spin={o.spin || 0} photoKey={o.photoKey} />
+              <PhotoObject src={o.image} size={o.photoSize} spin={o.spin || 0} photoKey={o.photoKey} swirl={o.swirl} />
             ) : (
               <C />
             )}
