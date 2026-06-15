@@ -52,12 +52,12 @@ export const COSMIC = [
     photoSize: 3.8,
     photoKey: { lo: 0.1, hi: 0.3, inner: 0.8, outer: 1.2 },
     spin: 0.03,
+    core: [0.51, 0.45],
     name: 'Quasar',
     subtitle: 'Blazing Galactic Core',
     accent: '#ff9a4d',
     position: [-15, 6.5, -15],
     focusDist: 2.0,
-    focusLift: 0.2,
     facts: {
       Type: 'Active galactic nucleus',
       'Powered by': 'A feeding supermassive black hole',

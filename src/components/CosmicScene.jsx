@@ -37,8 +37,10 @@ function Rig({ focus }) {
       // aim a touch right (object reads left-of-panel) and below (raises it on screen)
       dLook.current.set(o.position[0] + o.focusDist * 0.085, o.position[1] - lift, o.position[2])
     }
-    cam.position.lerp(dPos.current, 0.045)
-    look.current.lerp(dLook.current, 0.045)
+    // ease in a touch faster than we ease back out (smoother, less abrupt return)
+    const k = focus == null ? 0.025 : 0.05
+    cam.position.lerp(dPos.current, k)
+    look.current.lerp(dLook.current, k)
     cam.lookAt(look.current)
   })
 
@@ -58,7 +60,7 @@ export default function CosmicScene({ focus, onSelect, onHover }) {
             {/* Visuals carry NO event handlers, so clicks fall through to the
                 canvas' onPointerMissed (which exits focus). */}
             {o.image ? (
-              <PhotoObject src={o.image} size={o.photoSize} spin={o.spin || 0} photoKey={o.photoKey} />
+              <PhotoObject src={o.image} size={o.photoSize} spin={o.spin || 0} photoKey={o.photoKey} core={o.core} />
             ) : (
               <C />
             )}

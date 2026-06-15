@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react'
 import { useFrame, useLoader } from '@react-three/fiber'
 import { Billboard } from '@react-three/drei'
-import { TextureLoader, AdditiveBlending, SRGBColorSpace } from 'three'
+import { TextureLoader, AdditiveBlending, SRGBColorSpace, PlaneGeometry } from 'three'
 import { hdr } from './shared.jsx'
 
 const BOOST = hdr(1.25, 1.25, 1.25)
@@ -13,9 +13,8 @@ const keyVert = /* glsl */ `
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }
 `
-// Keys out the photo's own background: dark pixels -> transparent (luminance),
-// plus a radial mask that fades the outer edges. Additive blend uses the alpha
-// so the object glows in OUR starfield. (No distortion of the image itself.)
+// Keys out the photo's own background (luminance + radial edge mask). Additive
+// blend uses the alpha so the object glows in OUR starfield. No distortion.
 const keyFrag = /* glsl */ `
   uniform sampler2D map;
   uniform float uLo, uHi, uInner, uOuter, uBoost;
@@ -31,11 +30,13 @@ const keyFrag = /* glsl */ `
 
 /**
  * A real deep-space photo as a camera-facing billboard.
- * - `photoKey` keys out the photo's background.
- * - `spin` slowly rotates the whole image (rotation illusion, no distortion).
- * - keyed objects without spin gently wobble for a subtle 3D feel.
+ * - `photoKey` keys out the photo background.
+ * - `spin` rotates the whole image (rotation illusion). With `core` [u,v] the
+ *   geometry is shifted so that point becomes the pivot AND the framing centre,
+ *   so e.g. a quasar spins around its disk core instead of drifting.
+ * - keyed objects without spin gently wobble.
  */
-export default function PhotoObject({ src, size = 4, spin = 0, photoKey }) {
+export default function PhotoObject({ src, size = 4, spin = 0, photoKey, core }) {
   const tex = useLoader(TextureLoader, src)
   tex.colorSpace = SRGBColorSpace
   tex.anisotropy = 8
@@ -43,6 +44,18 @@ export default function PhotoObject({ src, size = 4, spin = 0, photoKey }) {
   const keyed = !!photoKey
   const mesh = useRef()
   const phase = useRef(Math.random() * 10)
+
+  const aspect = tex.image ? tex.image.width / tex.image.height : 1.4
+
+  // Plane geometry, shifted so the `core` point sits at the local origin (the
+  // pivot of rotation and the object's anchor point).
+  const geometry = useMemo(() => {
+    const w = size * aspect
+    const h = size
+    const g = new PlaneGeometry(w, h)
+    if (core) g.translate(-(core[0] - 0.5) * w, -(core[1] - 0.5) * h, 0)
+    return g
+  }, [size, aspect, core])
 
   const uniforms = useMemo(() => {
     if (!keyed) return null
@@ -59,7 +72,7 @@ export default function PhotoObject({ src, size = 4, spin = 0, photoKey }) {
   useFrame((state, dt) => {
     if (!mesh.current) return
     if (spin) {
-      mesh.current.rotation.z += dt * spin // whole-image rotation illusion
+      mesh.current.rotation.z += dt * spin
     } else if (keyed) {
       const t = state.clock.elapsedTime + phase.current
       mesh.current.rotation.x = Math.sin(t * 0.5) * 0.07
@@ -67,12 +80,9 @@ export default function PhotoObject({ src, size = 4, spin = 0, photoKey }) {
     }
   })
 
-  const aspect = tex.image ? tex.image.width / tex.image.height : 1.4
-
   return (
     <Billboard>
-      <mesh ref={mesh}>
-        <planeGeometry args={[size * aspect, size]} />
+      <mesh ref={mesh} geometry={geometry}>
         {keyed ? (
           <shaderMaterial
             vertexShader={keyVert}
