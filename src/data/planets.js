@@ -8,7 +8,7 @@ export const BODIES = [
     name: 'The Sun',
     subtitle: 'G-type main-sequence star',
     isStar: true,
-    texture: '/textures/2k_sun.jpg',
+    texture: '/textures/4k_sun.jpg',
     color: '#ffae42',
     visualRadius: 2.4,
     rotationSpeed: 0.06,
@@ -39,7 +39,7 @@ export const BODIES = [
     id: 'mercury',
     name: 'Mercury',
     subtitle: 'The Swift Planet',
-    texture: '/textures/2k_mercury.jpg',
+    texture: '/textures/4k_mercury.jpg',
     color: '#b1adab',
     visualRadius: 0.5,
     rotationSpeed: 0.04,
@@ -73,7 +73,7 @@ export const BODIES = [
     subtitle: "Earth's Twin Gone Wrong",
     texture: '/textures/2k_venus_atmosphere.jpg', // Venus is permanently cloud-covered
     color: '#e8c37e',
-    atmosphere: { color: '#ffd9a0', intensity: 1.1, power: 2.3 },
+    atmosphere: { color: '#ffce80', intensity: 0.5, power: 2.8, scale: 1.04 },
     visualRadius: 0.78,
     rotationSpeed: -0.02, // retrograde
     axialTilt: 3.096, // ~177.4° — almost upside down
@@ -104,10 +104,10 @@ export const BODIES = [
     id: 'earth',
     name: 'Earth',
     subtitle: 'The Pale Blue Dot',
-    texture: '/textures/2k_earth_daymap.jpg',
-    clouds: '/textures/2k_earth_clouds.jpg',
+    texture: '/textures/4k_earth_daymap.jpg',
+    clouds: '/textures/4k_earth_clouds.jpg',
     color: '#4f7cff',
-    atmosphere: { color: '#6db3ff', intensity: 1.0, power: 2.6 },
+    atmosphere: { color: '#7fb8ff', intensity: 0.95, power: 2.4, scale: 1.05 },
     visualRadius: 0.82,
     rotationSpeed: 0.085,
     axialTilt: 0.409, // 23.4°
@@ -137,9 +137,8 @@ export const BODIES = [
     id: 'mars',
     name: 'Mars',
     subtitle: 'The Red Planet',
-    texture: '/textures/2k_mars.jpg',
+    texture: '/textures/4k_mars.jpg',
     color: '#c1440e',
-    atmosphere: { color: '#ff7a45', intensity: 0.4, power: 3.4 },
     visualRadius: 0.58,
     rotationSpeed: 0.115,
     axialTilt: 0.439, // 25.2°
@@ -170,9 +169,8 @@ export const BODIES = [
     id: 'jupiter',
     name: 'Jupiter',
     subtitle: 'King of the Planets',
-    texture: '/textures/2k_jupiter.jpg',
+    texture: '/textures/4k_jupiter.jpg',
     color: '#d8ca9d',
-    atmosphere: { color: '#e8d3a8', intensity: 0.55, power: 3.0 },
     visualRadius: 1.7,
     rotationSpeed: 0.1,
     axialTilt: 0.0546, // 3.1°
@@ -203,10 +201,9 @@ export const BODIES = [
     id: 'saturn',
     name: 'Saturn',
     subtitle: 'The Ringed Jewel',
-    texture: '/textures/2k_saturn.jpg',
+    texture: '/textures/4k_saturn.jpg',
     ring: '/textures/2k_saturn_ring_alpha.png',
     color: '#e3cda0',
-    atmosphere: { color: '#efd9a8', intensity: 0.5, power: 3.0 },
     visualRadius: 1.45,
     rotationSpeed: 0.12,
     axialTilt: 0.466, // 26.7°
@@ -239,7 +236,7 @@ export const BODIES = [
     subtitle: 'The Sideways Ice Giant',
     texture: '/textures/2k_uranus.jpg',
     color: '#9fe3e0',
-    atmosphere: { color: '#a6f0ec', intensity: 0.75, power: 2.8 },
+    atmosphere: { color: '#bdf3ef', intensity: 0.4, power: 3.0, scale: 1.04 },
     visualRadius: 1.05,
     rotationSpeed: -0.1, // retrograde
     axialTilt: 1.706, // 97.8° — rolls on its side
@@ -272,7 +269,7 @@ export const BODIES = [
     subtitle: 'The Windiest World',
     texture: '/textures/2k_neptune.jpg',
     color: '#3b5bdb',
-    atmosphere: { color: '#4f7dff', intensity: 0.85, power: 2.7 },
+    atmosphere: { color: '#5b86ff', intensity: 0.5, power: 2.9, scale: 1.04 },
     visualRadius: 1.02,
     rotationSpeed: 0.11,
     axialTilt: 0.494, // 28.3°

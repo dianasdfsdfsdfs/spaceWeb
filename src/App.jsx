@@ -87,13 +87,12 @@ export default function App() {
           <color attach="background" args={['#070b22']} />
           <PerspectiveCamera makeDefault position={[0, 0.6, 8.5]} fov={42} />
 
-          {/* A strong key light gives a realistic day/night terminator (like the
-              reference photos); ambient + a soft fill keep the night side visible
-              rather than pitch black. */}
-          <ambientLight intensity={0.55} />
-          <hemisphereLight args={['#9fb4ff', '#1a2038', 0.4]} />
-          <directionalLight position={[5, 2.5, 6]} intensity={2.6} />
-          <directionalLight position={[-6, -1, 2]} intensity={0.35} color="#7d93ff" />
+          {/* Even, mostly frontal lighting like the reference photos: the face
+              toward the camera stays bright with only gentle limb shading. */}
+          <ambientLight intensity={0.5} />
+          <hemisphereLight args={['#aab8e8', '#202840', 0.3]} />
+          <directionalLight position={[-2.5, 2, 7]} intensity={1.7} />
+          <directionalLight position={[3.5, -0.5, 6]} intensity={1.15} />
 
           <Suspense fallback={null}>
             <Starfield />

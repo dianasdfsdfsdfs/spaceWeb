@@ -24,8 +24,14 @@ const fragmentShader = /* glsl */ `
   }
 `
 
-/** A soft fresnel rim/atmosphere shell rendered just outside a planet. */
-export default function Atmosphere({ radius, color = '#6db3ff', intensity = 0.8, power = 2.8 }) {
+/** A soft fresnel atmosphere shell rendered just outside a planet (e.g. Earth). */
+export default function Atmosphere({
+  radius,
+  color = '#6db3ff',
+  intensity = 0.8,
+  power = 2.8,
+  scale = 1.05,
+}) {
   const uniforms = useMemo(
     () => ({
       uColor: { value: new Color(color) },
@@ -36,8 +42,8 @@ export default function Atmosphere({ radius, color = '#6db3ff', intensity = 0.8,
   )
 
   return (
-    <mesh scale={1.06}>
-      <sphereGeometry args={[radius, 32, 32]} />
+    <mesh scale={scale}>
+      <sphereGeometry args={[radius, 48, 48]} />
       <shaderMaterial
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}

@@ -9,6 +9,8 @@ import {
   ClampToEdgeWrapping,
   SRGBColorSpace,
 } from 'three'
+import Atmosphere from './Atmosphere.jsx'
+
 /**
  * A single celestial body. The OUTER group's transform (position + scale) is
  * driven imperatively by the Carousel each frame, so we just forward a ref to
@@ -22,16 +24,15 @@ const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
   const ringMap = useLoader(TextureLoader, body.ring || body.texture)
 
   map.colorSpace = SRGBColorSpace
-  // sharper textures at grazing angles -> more realistic
-  if (map.anisotropy !== 8) {
-    map.anisotropy = 8
+  // crisp textures at grazing angles
+  if (map.anisotropy !== 16) {
+    map.anisotropy = 16
     map.needsUpdate = true
   }
 
   const r = body.visualRadius
 
-  // The cloud layer is a child of the spin group, so it already rotates WITH
-  // the planet at exactly the same speed (no separate cloud rotation).
+  // The cloud layer is a child of the spin group, so it rotates WITH the planet.
   useFrame((_, delta) => {
     if (spinRef.current) spinRef.current.rotation.y += body.rotationSpeed * delta * 1.3
   })
@@ -39,13 +40,12 @@ const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
   // HDR warm colour pushes the Sun above the bloom threshold so it glows naturally.
   const sunColor = useMemo(() => new Color(2.6, 1.9, 1.25), [])
 
-  // Saturn's ring needs custom UVs: the strip texture must map radially
-  // (inner edge -> outer edge), not be planar-projected.
+  // Saturn's ring needs custom UVs: the strip texture must map radially.
   const ringGeometry = useMemo(() => {
     if (!body.ring) return null
     const inner = r * 1.28
     const outer = r * 2.3
-    const geo = new RingGeometry(inner, outer, 160, 1)
+    const geo = new RingGeometry(inner, outer, 180, 1)
     const pos = geo.attributes.position
     const uv = geo.attributes.uv
     const v = new Vector3()
@@ -77,22 +77,22 @@ const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
             onPointerOver={() => (document.body.style.cursor = 'pointer')}
             onPointerOut={() => (document.body.style.cursor = 'default')}
           >
-            <sphereGeometry args={[r, 48, 48]} />
+            <sphereGeometry args={[r, 64, 64]} />
             {body.isStar ? (
               <meshBasicMaterial map={map} color={sunColor} toneMapped={false} />
             ) : (
-              <meshStandardMaterial map={map} roughness={0.92} metalness={0.02} />
+              <meshStandardMaterial map={map} roughness={0.88} metalness={0} />
             )}
           </mesh>
 
           {/* Earth cloud layer (rotates with the planet) */}
           {body.clouds && (
-            <mesh scale={1.015}>
-              <sphereGeometry args={[r, 48, 48]} />
+            <mesh scale={1.012}>
+              <sphereGeometry args={[r, 64, 64]} />
               <meshStandardMaterial
                 map={cloudMap}
                 transparent
-                opacity={0.5}
+                opacity={0.62}
                 depthWrite={false}
               />
             </mesh>
@@ -113,6 +113,17 @@ const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
           )}
         </group>
       </group>
+
+      {/* Soft atmospheric rim — only on bodies that have a real one (e.g. Earth) */}
+      {!body.isStar && body.atmosphere && (
+        <Atmosphere
+          radius={r}
+          color={body.atmosphere.color}
+          intensity={body.atmosphere.intensity}
+          power={body.atmosphere.power}
+          scale={body.atmosphere.scale}
+        />
+      )}
     </group>
   )
 })
