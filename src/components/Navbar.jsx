@@ -1,11 +1,9 @@
 const TABS = [
-  { id: 'solar', label: 'Solar System', enabled: true },
-  { id: 'blackholes', label: 'Black Holes', enabled: false },
-  { id: 'nebulae', label: 'Nebulae', enabled: false },
-  { id: 'exotic', label: 'Exotic Objects', enabled: false },
+  { id: 'solar', label: 'Solar System' },
+  { id: 'cosmic', label: 'Cosmic Objects' },
 ]
 
-export default function Navbar({ active = 'solar' }) {
+export default function Navbar({ active = 'solar', onSelect }) {
   return (
     <header className="navbar">
       <div className="brand">
@@ -16,14 +14,10 @@ export default function Navbar({ active = 'solar' }) {
         {TABS.map((t) => (
           <button
             key={t.id}
-            className={`tab ${t.id === active ? 'is-active' : ''} ${
-              t.enabled ? '' : 'is-disabled'
-            }`}
-            disabled={!t.enabled}
-            title={t.enabled ? t.label : 'Coming soon'}
+            className={`tab ${t.id === active ? 'is-active' : ''}`}
+            onClick={() => onSelect?.(t.id)}
           >
             {t.label}
-            {!t.enabled && <span className="soon">soon</span>}
           </button>
         ))}
       </nav>

@@ -3,21 +3,39 @@ import { Canvas } from '@react-three/fiber'
 import { PerspectiveCamera } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import Carousel from './components/Carousel.jsx'
+import CosmicScene from './components/CosmicScene.jsx'
 import Starfield from './components/Starfield.jsx'
 import InfoPanel from './components/InfoPanel.jsx'
 import Navbar from './components/Navbar.jsx'
 import Loader from './components/Loader.jsx'
 import { BODIES } from './data/planets.js'
+import { COSMIC } from './data/cosmicObjects.js'
 
 export default function App() {
+  const [section, setSection] = useState('solar') // 'solar' | 'cosmic'
+
+  // --- solar system state ---
   const [activeIndex, setActiveIndex] = useState(3) // start on Earth
   const [focusMode, setFocusMode] = useState(false)
   const [hintGone, setHintGone] = useState(false)
+
+  // --- cosmic objects state ---
+  const [cosmicFocus, setCosmicFocus] = useState(null) // index | null
+  const [hovered, setHovered] = useState(null)
+  const [cosmicHintGone, setCosmicHintGone] = useState(false)
 
   const drag = useRef({ startX: 0, dragging: false, didDrag: false })
 
   const active = BODIES[activeIndex]
 
+  const goSection = (id) => {
+    setSection(id)
+    setFocusMode(false)
+    setCosmicFocus(null)
+    setHovered(null)
+  }
+
+  // --- solar handlers ---
   const change = (dir) => {
     setFocusMode(false)
     setHintGone(true)
@@ -27,37 +45,48 @@ export default function App() {
   const handleSelect = (index) => {
     if (drag.current.didDrag) return
     setHintGone(true)
-    if (index === activeIndex) {
-      setFocusMode(true)
-    } else {
+    if (index === activeIndex) setFocusMode(true)
+    else {
       setFocusMode(false)
       setActiveIndex(index)
     }
   }
 
-  // keyboard navigation
+  // --- cosmic handlers ---
+  const selectCosmic = (i) => {
+    setCosmicHintGone(true)
+    setCosmicFocus(i)
+  }
+
+  // keyboard
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === 'ArrowRight') change(1)
-      else if (e.key === 'ArrowLeft') change(-1)
-      else if (e.key === 'Escape') setFocusMode(false)
-      else if (e.key === 'Enter' || e.key === ' ') setFocusMode(true)
+      if (e.key === 'Escape') {
+        setFocusMode(false)
+        setCosmicFocus(null)
+      } else if (section === 'solar') {
+        if (e.key === 'ArrowRight') change(1)
+        else if (e.key === 'ArrowLeft') change(-1)
+        else if (e.key === 'Enter' || e.key === ' ') setFocusMode(true)
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  }, [section])
 
-  // pointer drag = swipe
+  // pointer drag = swipe (solar only)
   const onPointerDown = (e) => {
+    if (section !== 'solar') return
     drag.current = { startX: e.clientX, dragging: true, didDrag: false }
   }
   const onPointerMove = (e) => {
+    if (section !== 'solar') return
     const d = drag.current
     if (!d.dragging || d.didDrag) return
     const dx = e.clientX - d.startX
     if (Math.abs(dx) > 55) {
       d.didDrag = true
-      change(dx > 0 ? 1 : -1) // swipe right -> next flies in from the right
+      change(dx > 0 ? 1 : -1)
     }
   }
   const onPointerUp = () => {
@@ -66,7 +95,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Navbar active="solar" />
+      <Navbar active={section} onSelect={goSection} />
 
       <div
         className="stage"
@@ -80,15 +109,15 @@ export default function App() {
           gl={{ antialias: true, powerPreference: 'high-performance', stencil: false }}
           performance={{ min: 0.5 }}
           onCreated={({ gl }) => {
-            // keep the page alive if the GPU drops the context instead of going black
             gl.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault())
+          }}
+          onPointerMissed={() => {
+            if (section === 'cosmic') setCosmicFocus(null)
           }}
         >
           <color attach="background" args={['#070b22']} />
-          <PerspectiveCamera makeDefault position={[0, 0.6, 8.5]} fov={42} />
 
-          {/* Even, mostly frontal lighting like the reference photos: the face
-              toward the camera stays bright with only gentle limb shading. */}
+          {/* lighting (used by the lit planets; cosmic objects are self-emissive) */}
           <ambientLight intensity={0.5} />
           <hemisphereLight args={['#aab8e8', '#202840', 0.3]} />
           <directionalLight position={[-2.5, 2, 7]} intensity={1.7} />
@@ -96,70 +125,86 @@ export default function App() {
 
           <Suspense fallback={null}>
             <Starfield />
-            <Carousel
-              activeIndex={activeIndex}
-              focusMode={focusMode}
-              onSelect={handleSelect}
-            />
+
+            {section === 'solar' ? (
+              <>
+                <PerspectiveCamera makeDefault position={[0, 0.6, 8.5]} fov={42} />
+                <Carousel activeIndex={activeIndex} focusMode={focusMode} onSelect={handleSelect} />
+              </>
+            ) : (
+              <CosmicScene focus={cosmicFocus} onSelect={selectCosmic} onHover={setHovered} />
+            )}
           </Suspense>
 
-          {/* multisampling 0 = far cheaper on weak/integrated GPUs (no MSAA buffer) */}
           <EffectComposer multisampling={0}>
-            {/* threshold 1.0 -> only the HDR Sun blooms; planets stay crisp/realistic */}
-            <Bloom
-              mipmapBlur
-              intensity={0.85}
-              luminanceThreshold={1.0}
-              luminanceSmoothing={0.15}
-            />
+            <Bloom mipmapBlur intensity={0.9} luminanceThreshold={1.0} luminanceSmoothing={0.15} />
             <Vignette eskil={false} offset={0.25} darkness={0.55} />
           </EffectComposer>
         </Canvas>
 
         <Loader />
 
-        {/* HUD */}
-        <button className="nav-arrow left" onClick={() => change(-1)} aria-label="Previous">
-          ‹
-        </button>
-        <button
-          className={`nav-arrow right ${focusMode ? 'shifted' : ''}`}
-          onClick={() => change(1)}
-          aria-label="Next"
-        >
-          ›
-        </button>
-
-        <div className={`title-card ${focusMode ? 'is-hidden' : ''}`}>
-          <p className="title-eyebrow">{active.subtitle}</p>
-          <h1>{active.name}</h1>
-          <button className="details-btn" onClick={() => setFocusMode(true)}>
-            View details ▸
-          </button>
-        </div>
-
-        <div className="dots">
-          {BODIES.map((b, i) => (
+        {/* ---------- SOLAR HUD ---------- */}
+        {section === 'solar' && (
+          <>
+            <button className="nav-arrow left" onClick={() => change(-1)} aria-label="Previous">
+              ‹
+            </button>
             <button
-              key={b.id}
-              className={`dot ${i === activeIndex ? 'is-active' : ''}`}
-              onClick={() => {
-                setFocusMode(false)
-                setActiveIndex(i)
-              }}
-              title={b.name}
-            />
-          ))}
-        </div>
+              className={`nav-arrow right ${focusMode ? 'shifted' : ''}`}
+              onClick={() => change(1)}
+              aria-label="Next"
+            >
+              ›
+            </button>
 
-        {!hintGone && (
-          <div className="hint">
-            Drag or use ← → to travel between worlds · Click a planet for details
-          </div>
+            <div className={`title-card ${focusMode ? 'is-hidden' : ''}`}>
+              <p className="title-eyebrow">{active.subtitle}</p>
+              <h1>{active.name}</h1>
+              <button className="details-btn" onClick={() => setFocusMode(true)}>
+                View details ▸
+              </button>
+            </div>
+
+            <div className="dots">
+              {BODIES.map((b, i) => (
+                <button
+                  key={b.id}
+                  className={`dot ${i === activeIndex ? 'is-active' : ''}`}
+                  onClick={() => {
+                    setFocusMode(false)
+                    setActiveIndex(i)
+                  }}
+                  title={b.name}
+                />
+              ))}
+            </div>
+
+            {!hintGone && (
+              <div className="hint">
+                Drag or use ← → to travel between worlds · Click a planet for details
+              </div>
+            )}
+
+            {focusMode && <InfoPanel body={active} onClose={() => setFocusMode(false)} />}
+          </>
         )}
 
-        {focusMode && (
-          <InfoPanel body={active} onClose={() => setFocusMode(false)} />
+        {/* ---------- COSMIC HUD ---------- */}
+        {section === 'cosmic' && (
+          <>
+            {cosmicFocus == null && hovered != null && (
+              <div className="hover-name">{COSMIC[hovered].name}</div>
+            )}
+
+            {cosmicFocus == null && !cosmicHintGone && (
+              <div className="hint">Click an object to fly in and explore it · Esc to come back</div>
+            )}
+
+            {cosmicFocus != null && (
+              <InfoPanel body={COSMIC[cosmicFocus]} onClose={() => setCosmicFocus(null)} />
+            )}
+          </>
         )}
       </div>
     </div>

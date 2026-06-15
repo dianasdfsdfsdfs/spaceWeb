@@ -39,20 +39,33 @@ export default function InfoPanel({ body, onClose }) {
         </ul>
       </section>
 
-      <section className="info-section">
-        <h3>Myth &amp; name</h3>
-        <p>{body.mythology}</p>
-      </section>
+      {/* Generic prose sections (used by cosmic objects) */}
+      {body.sections?.map((s, i) => (
+        <section className="info-section" key={i}>
+          <h3>{s.heading}</h3>
+          <p>{s.text}</p>
+        </section>
+      ))}
 
-      <section className="info-section">
-        <h3>Mystery &amp; theories</h3>
-        <p>{body.mystery}</p>
-      </section>
-
-      <section className="info-section info-life">
-        <h3>Chance of life</h3>
-        <p>{body.life}</p>
-      </section>
+      {/* Legacy planet sections */}
+      {body.mythology && (
+        <section className="info-section">
+          <h3>Myth &amp; name</h3>
+          <p>{body.mythology}</p>
+        </section>
+      )}
+      {body.mystery && (
+        <section className="info-section">
+          <h3>Mystery &amp; theories</h3>
+          <p>{body.mystery}</p>
+        </section>
+      )}
+      {body.life && (
+        <section className="info-section info-life">
+          <h3>Chance of life</h3>
+          <p>{body.life}</p>
+        </section>
+      )}
     </aside>
   )
 }
