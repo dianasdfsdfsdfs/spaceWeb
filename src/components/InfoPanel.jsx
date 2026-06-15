@@ -1,6 +1,14 @@
 export default function InfoPanel({ body, onClose }) {
   return (
-    <aside className="info-panel" key={body.id}>
+    <aside
+      className="info-panel"
+      key={body.id}
+      // keep text selection inside the panel from being treated as a
+      // swipe/click on the planet behind it
+      onPointerDown={(e) => e.stopPropagation()}
+      onPointerMove={(e) => e.stopPropagation()}
+      onPointerUp={(e) => e.stopPropagation()}
+    >
       <button className="info-close" onClick={onClose} aria-label="Close">
         ×
       </button>

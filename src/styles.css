@@ -284,6 +284,8 @@ body {
   padding: 104px 34px 48px;
   overflow-y: auto;
   overscroll-behavior: contain;
+  user-select: text;
+  cursor: auto;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   will-change: transform;
