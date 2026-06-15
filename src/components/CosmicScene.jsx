@@ -32,8 +32,10 @@ function Rig({ focus }) {
       // Camera straight in front of the object; we AIM a little to the right of
       // it so the object shifts left on screen and sits centred in the area NOT
       // covered by the info panel (rather than dead-centre under the panel).
+      const lift = o.focusLift || 0
       dPos.current.set(o.position[0], o.position[1], o.position[2] + o.focusDist)
-      dLook.current.set(o.position[0] + o.focusDist * 0.085, o.position[1], o.position[2])
+      // aim a touch right (object reads left-of-panel) and below (raises it on screen)
+      dLook.current.set(o.position[0] + o.focusDist * 0.085, o.position[1] - lift, o.position[2])
     }
     cam.position.lerp(dPos.current, 0.045)
     look.current.lerp(dLook.current, 0.045)
