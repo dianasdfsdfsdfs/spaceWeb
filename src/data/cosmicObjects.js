@@ -57,7 +57,7 @@ export const COSMIC = [
     accent: '#ff9a4d',
     position: [-15, 6.5, -15],
     focusDist: 2.0,
-    focusLift: 0.5,
+    focusLift: 0.2,
     facts: {
       Type: 'Active galactic nucleus',
       'Powered by': 'A feeding supermassive black hole',
