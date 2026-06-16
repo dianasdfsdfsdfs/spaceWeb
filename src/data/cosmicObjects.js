@@ -120,6 +120,8 @@ export const COSMIC = [
     image: '/textures/cosmic/kilonova.jpg',
     photoSize: 3.4,
     photoKey: { lo: 0.07, hi: 0.28, inner: 0.34, outer: 0.56 },
+    spin: 0.6,
+    pulse: 0.05,
     name: 'Kilonova',
     subtitle: 'Neutron Star Collision',
     accent: '#9ad6ff',

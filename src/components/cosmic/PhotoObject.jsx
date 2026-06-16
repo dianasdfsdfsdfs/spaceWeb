@@ -45,7 +45,7 @@ const keyFrag = /* glsl */ `
  *   so e.g. a quasar spins around its disk core instead of drifting.
  * - keyed objects without spin gently wobble.
  */
-export default function PhotoObject({ src, size = 4, spin = 0, photoKey, core }) {
+export default function PhotoObject({ src, size = 4, spin = 0, pulse = 0, photoKey, core }) {
   const tex = useLoader(TextureLoader, src)
   tex.colorSpace = SRGBColorSpace
   tex.anisotropy = 8
@@ -83,11 +83,16 @@ export default function PhotoObject({ src, size = 4, spin = 0, photoKey, core })
   useFrame((state, dt) => {
     if (!mesh.current) return
     if (spin) {
-      mesh.current.rotation.z += dt * spin
+      mesh.current.rotation.z += dt * spin // whole-image rotation (orbit / lighthouse)
     } else if (keyed) {
       const t = state.clock.elapsedTime + phase.current
       mesh.current.rotation.x = Math.sin(t * 0.5) * 0.07
       mesh.current.rotation.y = Math.cos(t * 0.4) * 0.09
+    }
+    if (pulse) {
+      // gentle throb (e.g. a merging kilonova pulsing)
+      const s = 1 + pulse * Math.sin(state.clock.elapsedTime * 2.2)
+      mesh.current.scale.setScalar(s)
     }
   })
 

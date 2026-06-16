@@ -63,7 +63,7 @@ export default function CosmicScene({ focus, onSelect, onHover }) {
             {/* Visuals carry NO event handlers, so clicks fall through to the
                 canvas' onPointerMissed (which exits focus). */}
             {o.image ? (
-              <PhotoObject src={o.image} size={o.photoSize} spin={o.spin || 0} photoKey={o.photoKey} core={o.core} />
+              <PhotoObject src={o.image} size={o.photoSize} spin={o.spin || 0} pulse={o.pulse || 0} photoKey={o.photoKey} core={o.core} />
             ) : (
               <C />
             )}
