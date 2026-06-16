@@ -38,8 +38,11 @@ const shockFrag = /* glsl */ `
   varying vec3 vN;
   varying vec3 vV;
   void main() {
-    float rim = pow(1.0 - max(dot(vN, vV), 0.0), 2.2);
-    gl_FragColor = vec4(uColor, rim * uOpacity);
+    float d = max(dot(vN, vV), 0.0);
+    // bright in a band just inside the limb, fading to 0 AT the silhouette so the
+    // outer edge feathers out softly instead of cutting off hard
+    float a = pow(1.0 - d, 1.7) * smoothstep(0.0, 0.22, d);
+    gl_FragColor = vec4(uColor, a * uOpacity);
   }
 `
 
