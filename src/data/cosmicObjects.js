@@ -151,7 +151,7 @@ export const COSMIC = [
     type: 'magnetar',
     image: '/textures/cosmic/magnetar.jpg',
     photoSize: 3.9,
-    photoKey: { lo: 0.08, hi: 0.32, inner: 0.34, outer: 0.62, blue: [0.0, 0.08] },
+    photoKey: { lo: 0.08, hi: 0.32, inner: 0.32, outer: 0.55 },
     spin: 0.2,
     core: [0.59, 0.42],
     name: 'Magnetar',
