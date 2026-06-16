@@ -85,6 +85,10 @@ export const COSMIC = [
   {
     id: 'pulsar',
     type: 'pulsar',
+    image: '/textures/cosmic/pulsar.jpg',
+    photoSize: 3.4,
+    photoKey: { lo: 0.12, hi: 0.35, inner: 0.3, outer: 0.62 },
+    spin: 0.5,
     name: 'Pulsar',
     subtitle: 'Spinning Neutron Star',
     accent: '#7fd0ff',
