@@ -4,41 +4,41 @@ import Beam from './Beam.jsx'
 import StarSurface from './StarSurface.jsx'
 import { Glow, hdr } from './shared.jsx'
 
-// same blue-white hue as before, just a touch less blown out so the beam stays thin
-const BEAM_CORE = hdr(1.8, 2.2, 3.1)
+const BEAM_CORE = hdr(1.9, 2.3, 3.2)
 const BEAM_GLOW = hdr(1.0, 1.6, 3.0)
 
 export default function Pulsar() {
   const spin = useRef()
-  // fast rotation — the tilted beams sweep like a lighthouse
+  // rotation about the (near-vertical) spin axis -> the tilted beams sweep
   useFrame((_, dt) => {
-    if (spin.current) spin.current.rotation.y += dt * 1.8
+    if (spin.current) spin.current.rotation.y += dt * 1.2
   })
 
   return (
-    <group rotation={[0.45, 0, 0.1]}>
+    <group rotation={[0.2, 0, 0.12]}>
       <group ref={spin}>
-        {/* colourful blue neutron star with a visible mottled surface */}
+        {/* bright blue neutron star with a visible mottled surface */}
         <StarSurface
-          radius={0.34}
-          low={[0.22, 0.5, 1.3]}
-          high={[0.9, 1.45, 2.4]}
-          base={0.6}
-          amp={0.65}
-          rim={1.1}
-          turb={4.6}
+          radius={0.45}
+          low={[0.3, 0.6, 1.4]}
+          high={[1.1, 1.6, 2.6]}
+          base={0.65}
+          amp={0.6}
+          rim={1.2}
+          turb={4.4}
         />
 
-        {/* magnetic axis tilted from the spin (Y) axis -> the beams sweep */}
-        <group rotation={[0, 0, 0.55]}>
-          <Beam length={5.0} radius={0.04} core={BEAM_CORE} glow={BEAM_GLOW} />
+        {/* magnetic axis tilted slightly off the vertical spin axis so the two
+            near-vertical beams sweep like a lighthouse */}
+        <group rotation={[0, 0, 0.28]}>
+          <Beam length={5.2} radius={0.04} core={BEAM_CORE} glow={BEAM_GLOW} />
           <group rotation={[Math.PI, 0, 0]}>
-            <Beam length={5.0} radius={0.04} core={BEAM_CORE} glow={BEAM_GLOW} />
+            <Beam length={5.2} radius={0.04} core={BEAM_CORE} glow={BEAM_GLOW} />
           </group>
         </group>
       </group>
 
-      <Glow color="#7fb8ff" scale={2.4} opacity={0.5} />
+      <Glow color="#8fc8ff" scale={2.8} opacity={0.6} />
     </group>
   )
 }
