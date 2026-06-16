@@ -31,9 +31,9 @@ export default function Pulsar() {
         {/* magnetic axis tilted slightly off the vertical spin axis so the two
             near-vertical beams sweep like a lighthouse */}
         <group rotation={[0, 0, 0.28]}>
-          <Beam length={5.2} radius={0.03} core={BEAM_CORE} glow={BEAM_GLOW} />
+          <Beam length={4.2} radius={0.03} core={BEAM_CORE} glow={BEAM_GLOW} />
           <group rotation={[Math.PI, 0, 0]}>
-            <Beam length={5.2} radius={0.03} core={BEAM_CORE} glow={BEAM_GLOW} />
+            <Beam length={4.2} radius={0.03} core={BEAM_CORE} glow={BEAM_GLOW} />
           </group>
         </group>
       </group>
