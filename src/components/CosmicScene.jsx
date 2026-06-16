@@ -5,12 +5,14 @@ import { Vector3 } from 'three'
 import { COSMIC } from '../data/cosmicObjects.js'
 import BlackHole from './cosmic/BlackHole.jsx'
 import Pulsar from './cosmic/Pulsar.jsx'
+import Kilonova from './cosmic/Kilonova.jsx'
 import PhotoObject from './cosmic/PhotoObject.jsx'
 
 // Procedural objects (the rest use real photos via PhotoObject).
 const COMPONENTS = {
   blackhole: BlackHole,
   pulsar: Pulsar,
+  kilonova: Kilonova,
 }
 
 const OVERVIEW_POS = new Vector3(0, 0.5, 15)
