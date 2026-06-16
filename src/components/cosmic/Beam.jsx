@@ -1,16 +1,16 @@
 import { AdditiveBlending, DoubleSide } from 'three'
 
 /**
- * A bright, sharp beam/jet pointing +Y from the origin. It tapers to a point at
- * the tip (like a real pulsar beam / jet) with only a thin glow — not a big
- * fuzzy cone.
+ * A thin, near-straight beam/jet pointing +Y from the origin (like a quasar jet,
+ * not a fat cone): a bright narrow core that tapers slightly to its tip, wrapped
+ * in a restrained glow.
  */
-export default function Beam({ length = 3, radius = 0.06, core, glow, opacity = 0.95 }) {
+export default function Beam({ length = 3, radius = 0.04, core, glow, opacity = 0.95 }) {
   return (
     <group>
-      {/* tight bright core, tapering to a point at the tip */}
+      {/* bright narrow core (slightly tapered tip, mostly straight) */}
       <mesh position={[0, length / 2, 0]}>
-        <coneGeometry args={[radius, length, 18, 1, true]} />
+        <cylinderGeometry args={[radius * 0.3, radius, length, 14, 1, true]} />
         <meshBasicMaterial
           color={core}
           transparent
@@ -21,13 +21,13 @@ export default function Beam({ length = 3, radius = 0.06, core, glow, opacity = 
           toneMapped={false}
         />
       </mesh>
-      {/* thin restrained glow */}
+      {/* soft, narrow glow sheath */}
       <mesh position={[0, length / 2, 0]}>
-        <coneGeometry args={[radius * 2.4, length, 22, 1, true]} />
+        <cylinderGeometry args={[radius * 0.9, radius * 1.7, length, 16, 1, true]} />
         <meshBasicMaterial
           color={glow}
           transparent
-          opacity={0.08}
+          opacity={0.12}
           blending={AdditiveBlending}
           depthWrite={false}
           side={DoubleSide}
