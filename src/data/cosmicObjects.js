@@ -50,7 +50,7 @@ export const COSMIC = [
     type: 'quasar',
     image: '/textures/cosmic/quasar.jpg',
     photoSize: 3.8,
-    photoKey: { lo: 0.1, hi: 0.3, inner: 0.32, outer: 0.95, edge: 0.08 },
+    photoKey: { lo: 0.1, hi: 0.3, inner: 0.35, outer: 0.62 },
     spin: 0.03,
     core: [0.51, 0.45],
     name: 'Quasar',

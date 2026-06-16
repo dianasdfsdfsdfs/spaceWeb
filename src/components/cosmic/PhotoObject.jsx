@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react'
 import { useFrame, useLoader } from '@react-three/fiber'
 import { Billboard } from '@react-three/drei'
-import { TextureLoader, AdditiveBlending, SRGBColorSpace, PlaneGeometry } from 'three'
+import { TextureLoader, AdditiveBlending, SRGBColorSpace, PlaneGeometry, Vector2 } from 'three'
 import { hdr } from './shared.jsx'
 
 const BOOST = hdr(1.25, 1.25, 1.25)
@@ -18,11 +18,14 @@ const keyVert = /* glsl */ `
 const keyFrag = /* glsl */ `
   uniform sampler2D map;
   uniform float uLo, uHi, uInner, uOuter, uBoost, uEdge;
+  uniform vec2 uCore;
   varying vec2 vUv;
   void main() {
     vec4 t = texture2D(map, vUv);
     float lum = dot(t.rgb, vec3(0.299, 0.587, 0.114));
-    float a = smoothstep(uLo, uHi, lum) * smoothstep(uOuter, uInner, distance(vUv, vec2(0.5)));
+    // radial fade measured from the object's core, so opposite jets are trimmed
+    // to equal length before tapering off
+    float a = smoothstep(uLo, uHi, lum) * smoothstep(uOuter, uInner, distance(vUv, uCore));
     // soft fade along the plane's rectangular border so e.g. jets that reach the
     // edge taper out instead of cutting off abruptly
     if (uEdge > 0.0) {
@@ -73,8 +76,9 @@ export default function PhotoObject({ src, size = 4, spin = 0, photoKey, core })
       uOuter: { value: photoKey.outer ?? 0.56 },
       uBoost: { value: photoKey.boost ?? 1.6 },
       uEdge: { value: photoKey.edge ?? 0 },
+      uCore: { value: new Vector2(core ? core[0] : 0.5, core ? core[1] : 0.5) },
     }
-  }, [keyed, tex, photoKey])
+  }, [keyed, tex, photoKey, core])
 
   useFrame((state, dt) => {
     if (!mesh.current) return
