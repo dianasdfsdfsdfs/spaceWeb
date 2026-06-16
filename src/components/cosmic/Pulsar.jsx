@@ -24,21 +24,22 @@ export default function Pulsar() {
           high={[1.1, 1.6, 2.6]}
           base={0.65}
           amp={0.6}
-          rim={1.2}
+          rim={0.9}
           turb={4.4}
         />
 
         {/* magnetic axis tilted slightly off the vertical spin axis so the two
             near-vertical beams sweep like a lighthouse */}
         <group rotation={[0, 0, 0.28]}>
-          <Beam length={5.2} radius={0.04} core={BEAM_CORE} glow={BEAM_GLOW} />
+          <Beam length={5.2} radius={0.03} core={BEAM_CORE} glow={BEAM_GLOW} />
           <group rotation={[Math.PI, 0, 0]}>
-            <Beam length={5.2} radius={0.04} core={BEAM_CORE} glow={BEAM_GLOW} />
+            <Beam length={5.2} radius={0.03} core={BEAM_CORE} glow={BEAM_GLOW} />
           </group>
         </group>
       </group>
 
-      <Glow color="#8fc8ff" scale={2.8} opacity={0.6} />
+      {/* tight glow hugging the star (not a wide halo) */}
+      <Glow color="#8fc8ff" scale={1.4} opacity={0.7} />
     </group>
   )
 }
