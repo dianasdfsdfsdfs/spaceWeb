@@ -17,12 +17,18 @@ const keyVert = /* glsl */ `
 // blend uses the alpha so the object glows in OUR starfield. No distortion.
 const keyFrag = /* glsl */ `
   uniform sampler2D map;
-  uniform float uLo, uHi, uInner, uOuter, uBoost;
+  uniform float uLo, uHi, uInner, uOuter, uBoost, uEdge;
   varying vec2 vUv;
   void main() {
     vec4 t = texture2D(map, vUv);
     float lum = dot(t.rgb, vec3(0.299, 0.587, 0.114));
     float a = smoothstep(uLo, uHi, lum) * smoothstep(uOuter, uInner, distance(vUv, vec2(0.5)));
+    // soft fade along the plane's rectangular border so e.g. jets that reach the
+    // edge taper out instead of cutting off abruptly
+    if (uEdge > 0.0) {
+      a *= smoothstep(0.0, uEdge, vUv.x) * smoothstep(0.0, uEdge, 1.0 - vUv.x) *
+           smoothstep(0.0, uEdge, vUv.y) * smoothstep(0.0, uEdge, 1.0 - vUv.y);
+    }
     if (a < 0.01) discard;
     gl_FragColor = vec4(t.rgb * uBoost, a);
   }
@@ -66,6 +72,7 @@ export default function PhotoObject({ src, size = 4, spin = 0, photoKey, core })
       uInner: { value: photoKey.inner ?? 0.36 },
       uOuter: { value: photoKey.outer ?? 0.56 },
       uBoost: { value: photoKey.boost ?? 1.6 },
+      uEdge: { value: photoKey.edge ?? 0 },
     }
   }, [keyed, tex, photoKey])
 
