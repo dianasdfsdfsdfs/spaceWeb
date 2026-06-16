@@ -17,7 +17,7 @@ const keyVert = /* glsl */ `
 // blend uses the alpha so the object glows in OUR starfield. No distortion.
 const keyFrag = /* glsl */ `
   uniform sampler2D map;
-  uniform float uLo, uHi, uInner, uOuter, uBoost, uEdge;
+  uniform float uLo, uHi, uInner, uOuter, uBoost, uEdge, uBlueLo, uBlueHi;
   uniform vec2 uCore;
   varying vec2 vUv;
   void main() {
@@ -26,6 +26,12 @@ const keyFrag = /* glsl */ `
     // radial fade measured from the object's core, so opposite jets are trimmed
     // to equal length before tapering off
     float a = smoothstep(uLo, uHi, lum) * smoothstep(uOuter, uInner, distance(vUv, uCore));
+    // optional "blue key": keep only blue-dominant pixels (the object), drop
+    // white/warm pixels (the photo's own background stars)
+    if (uBlueHi > uBlueLo) {
+      float blue = t.b - max(t.r, t.g);
+      a *= smoothstep(uBlueLo, uBlueHi, blue);
+    }
     // soft fade along the plane's rectangular border so e.g. jets that reach the
     // edge taper out instead of cutting off abruptly
     if (uEdge > 0.0) {
@@ -77,6 +83,8 @@ export default function PhotoObject({ src, size = 4, spin = 0, pulse = 0, photoK
       uBoost: { value: photoKey.boost ?? 1.6 },
       uEdge: { value: photoKey.edge ?? 0 },
       uCore: { value: new Vector2(core ? core[0] : 0.5, core ? core[1] : 0.5) },
+      uBlueLo: { value: photoKey.blue ? photoKey.blue[0] : 0 },
+      uBlueHi: { value: photoKey.blue ? photoKey.blue[1] : -1 },
     }
   }, [keyed, tex, photoKey, core])
 
