@@ -14,7 +14,7 @@ export const COSMIC = [
     name: 'Black Hole',
     subtitle: 'Gravitational Singularity',
     accent: '#ff7a2f',
-    position: [-1, 1.5, -8],
+    position: [-9.5, -4, -5],
     focusDist: 4.5,
     facts: {
       Type: 'Stellar / supermassive black hole',
@@ -56,7 +56,7 @@ export const COSMIC = [
     name: 'Quasar',
     subtitle: 'Blazing Galactic Core',
     accent: '#ff9a4d',
-    position: [-15, 6.5, -15],
+    position: [9.5, 3.8, -5],
     focusDist: 2.0,
     facts: {
       Type: 'Active galactic nucleus',
@@ -88,8 +88,9 @@ export const COSMIC = [
     name: 'Pulsar',
     subtitle: 'Spinning Neutron Star',
     accent: '#7fd0ff',
-    position: [14, 5, -13],
-    focusDist: 2.8,
+    position: [10, -3.8, -4],
+    focusDist: 4.2,
+    scale: 1.5,
     facts: {
       Type: 'Rotating neutron star',
       Diameter: 'Only ~20 km across',
@@ -120,8 +121,9 @@ export const COSMIC = [
     name: 'Kilonova',
     subtitle: 'Neutron Star Collision',
     accent: '#9ad6ff',
-    position: [-13, -7, -16],
-    focusDist: 3.6,
+    position: [0, -4.8, -4],
+    focusDist: 5.0,
+    scale: 1.4,
     facts: {
       Type: 'Merger of two neutron stars',
       Brightness: '~1,000× a normal nova',
@@ -157,7 +159,7 @@ export const COSMIC = [
     name: 'Magnetar',
     subtitle: 'Magnetic Monster Star',
     accent: '#4aa8ff',
-    position: [15, -6, -19],
+    position: [-9.5, 4.2, -5],
     focusDist: 4.1,
     facts: {
       Type: 'Ultra-magnetic neutron star',
@@ -192,8 +194,9 @@ export const COSMIC = [
     name: 'Ring Nebula',
     subtitle: 'A Dying Star’s Shell',
     accent: '#ff8a3d',
-    position: [4, -9, -21],
-    focusDist: 6.4,
+    position: [0, 5, -6],
+    focusDist: 5.1,
+    scale: 0.8,
     facts: {
       Type: 'Planetary nebula',
       Distance: '~2,600 light-years away',

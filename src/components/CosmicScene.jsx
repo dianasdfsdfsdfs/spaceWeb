@@ -15,8 +15,8 @@ const COMPONENTS = {
   kilonova: Kilonova,
 }
 
-const OVERVIEW_POS = new Vector3(0, 0.5, 15)
-const OVERVIEW_LOOK = new Vector3(0, -0.5, -12)
+const OVERVIEW_POS = new Vector3(0, 0, 11)
+const OVERVIEW_LOOK = new Vector3(0, 0, -4)
 
 // Smoothly flies the camera between the scattered overview and a focused object.
 function Rig({ focus }) {
@@ -61,7 +61,7 @@ export default function CosmicScene({ focus, onSelect, onHover }) {
       {COSMIC.map((o, i) => {
         const C = COMPONENTS[o.type]
         return (
-          <group key={o.id} position={o.position}>
+          <group key={o.id} position={o.position} scale={o.scale || 1}>
             {/* Visuals carry NO event handlers, so clicks fall through to the
                 canvas' onPointerMissed (which exits focus). */}
             {o.image ? (
