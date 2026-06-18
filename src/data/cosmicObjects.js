@@ -196,7 +196,7 @@ export const COSMIC = [
     accent: '#ff8a3d',
     position: [0, -4, -5],
     focusDist: 5.1,
-    scale: 0.8,
+    scale: 1.2,
     facts: {
       Type: 'Planetary nebula',
       Distance: '~2,600 light-years away',
