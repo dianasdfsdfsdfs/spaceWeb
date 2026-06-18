@@ -136,7 +136,9 @@ export default function App() {
             gl.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault())
           }}
           onPointerMissed={() => {
+            // clicking empty space exits focus (cosmic object, or a focused planet)
             if (section === 'cosmic') setCosmicFocus(null)
+            else if (section === 'solar' && focusMode) setFocusMode(false)
           }}
         >
           <color attach="background" args={['#070b22']} />
