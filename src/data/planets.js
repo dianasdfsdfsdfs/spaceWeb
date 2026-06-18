@@ -89,7 +89,7 @@ export const BODIES = [
       'Surface temp.': '~465 °C (hot enough to melt lead)',
     },
     funFacts: [
-      'Venus spins backwards — on Venus the Sun rises in the west.',
+      'Venus spins backwards (retrograde) — the only planet besides Uranus to do so — so the Sun rises in the west. A giant ancient impact and the tidal drag of its ultra-dense atmosphere likely reversed its spin.',
       'A day on Venus is longer than a year on Venus.',
       'Its thick CO₂ atmosphere creates a runaway greenhouse effect, making it the hottest planet.',
       'Surface pressure is ~92× Earth’s — like being 900 m underwater.',
