@@ -5,10 +5,13 @@ export default function Loader() {
   if (!active && progress >= 100) return null
   return (
     <div className={`loader ${!active ? 'is-done' : ''}`}>
+      <div className="loader-brand">
+        COSMOS<span>EXPLORER</span>
+      </div>
       <div className="loader-orbit">
         <span className="loader-planet" />
       </div>
-      <p className="loader-text">Charting the Solar System… {Math.round(progress)}%</p>
+      <p className="loader-text">Loading… {Math.round(progress)}%</p>
     </div>
   )
 }
