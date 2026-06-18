@@ -75,7 +75,7 @@ export const BODIES = [
     color: '#e8c37e',
     atmosphere: { color: '#ffce80', intensity: 0.5, power: 2.8, scale: 1.04 },
     visualRadius: 0.78,
-    rotationSpeed: -0.06, // retrograde (spins backwards)
+    rotationSpeed: 0.06, // with the ~177° axial tilt this renders retrograde (east->west)
     axialTilt: 3.096, // ~177.4° — almost upside down
     facts: {
       Type: 'Terrestrial planet',
@@ -89,7 +89,7 @@ export const BODIES = [
       'Surface temp.': '~465 °C (hot enough to melt lead)',
     },
     funFacts: [
-      'Venus spins backwards (retrograde) — the only planet besides Uranus to do so — so the Sun rises in the west. A giant ancient impact and the tidal drag of its ultra-dense atmosphere likely reversed its spin.',
+      'Venus is the only planet that rotates east-to-west (retrograde) — so the Sun rises in the west. A giant ancient impact and the tidal drag of its ultra-dense atmosphere likely reversed its spin.',
       'A day on Venus is longer than a year on Venus.',
       'Its thick CO₂ atmosphere creates a runaway greenhouse effect, making it the hottest planet.',
       'Surface pressure is ~92× Earth’s — like being 900 m underwater.',
