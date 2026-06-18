@@ -89,7 +89,7 @@ export const COSMIC = [
     name: 'Pulsar',
     subtitle: 'Spinning Neutron Star',
     accent: '#7fd0ff',
-    position: [12.5, -4, -5],
+    position: [-12.5, -4, -5],
     focusDist: 4.2,
     scale: 1.5,
     facts: {
@@ -122,7 +122,7 @@ export const COSMIC = [
     name: 'Kilonova',
     subtitle: 'Neutron Star Collision',
     accent: '#9ad6ff',
-    position: [-12.5, -4, -5],
+    position: [12.5, -4, -5],
     focusDist: 5.0,
     scale: 1.4,
     facts: {
