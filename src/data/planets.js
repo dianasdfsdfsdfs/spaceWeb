@@ -75,7 +75,7 @@ export const BODIES = [
     color: '#e8c37e',
     atmosphere: { color: '#ffce80', intensity: 0.5, power: 2.8, scale: 1.04 },
     visualRadius: 0.78,
-    rotationSpeed: -0.02, // retrograde
+    rotationSpeed: -0.06, // retrograde (spins backwards)
     axialTilt: 3.096, // ~177.4° — almost upside down
     facts: {
       Type: 'Terrestrial planet',
