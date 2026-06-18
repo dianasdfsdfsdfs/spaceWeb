@@ -37,6 +37,9 @@ export default function App() {
   const [hovered, setHovered] = useState(null)
   const [cosmicHintGone, setCosmicHintGone] = useState(saved.cosmicHintGone ?? false)
 
+  // splash screen until the 3D scene + textures are ready
+  const [ready, setReady] = useState(false)
+
   // persist on every relevant change
   useEffect(() => {
     localStorage.setItem(
@@ -163,8 +166,6 @@ export default function App() {
           </EffectComposer>
         </Canvas>
 
-        <Loader />
-
         {/* ---------- SOLAR HUD ---------- */}
         {section === 'solar' && (
           <>
@@ -228,6 +229,9 @@ export default function App() {
           </>
         )}
       </div>
+
+      {/* splash / loading screen on top of everything until the scene is ready */}
+      {!ready && <Loader onDone={() => setReady(true)} />}
     </div>
   )
 }
