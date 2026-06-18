@@ -243,6 +243,37 @@ body {
   transform: scale(1.35);
 }
 
+/* ---------- Pause-animation control ---------- */
+.anim-toggle {
+  position: absolute;
+  left: 50%;
+  bottom: 34px;
+  transform: translateX(-50%);
+  z-index: 16;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  backdrop-filter: blur(10px);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.25s ease, border-color 0.2s ease, color 0.2s ease;
+  animation: fadeUp 0.3s ease;
+}
+.anim-toggle:hover {
+  opacity: 1;
+  color: var(--fg);
+  border-color: var(--accent);
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to { opacity: 0.7; transform: translate(-50%, 0); }
+}
+
 /* ---------- Hint ---------- */
 .hint {
   position: absolute;

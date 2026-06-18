@@ -40,6 +40,25 @@ export default function App() {
   // splash screen until the 3D scene + textures are ready
   const [ready, setReady] = useState(false)
 
+  // pause 3D animation (to read the info) + auto-hiding controls
+  const [paused, setPaused] = useState(false)
+  const [showControls, setShowControls] = useState(false)
+  const hideTimer = useRef()
+
+  const inFocus =
+    (section === 'solar' && focusMode) || (section === 'cosmic' && cosmicFocus != null)
+
+  const revealControls = () => {
+    setShowControls(true)
+    clearTimeout(hideTimer.current)
+    hideTimer.current = setTimeout(() => setShowControls(false), 2600)
+  }
+
+  // resume animation whenever the focus target changes
+  useEffect(() => {
+    setPaused(false)
+  }, [section, activeIndex, cosmicFocus, focusMode])
+
   // persist on every relevant change
   useEffect(() => {
     localStorage.setItem(
@@ -104,6 +123,7 @@ export default function App() {
     drag.current = { startX: e.clientX, dragging: true, didDrag: false }
   }
   const onPointerMove = (e) => {
+    revealControls()
     if (section !== 'solar') return
     const d = drag.current
     if (!d.dragging || d.didDrag) return
@@ -130,6 +150,7 @@ export default function App() {
       >
         <Canvas
           dpr={[1, 1.25]}
+          frameloop={paused ? 'never' : 'always'}
           gl={{ antialias: true, powerPreference: 'high-performance', stencil: false }}
           performance={{ min: 0.5 }}
           onCreated={({ gl }) => {
@@ -190,19 +211,21 @@ export default function App() {
               </button>
             </div>
 
-            <div className="dots">
-              {BODIES.map((b, i) => (
-                <button
-                  key={b.id}
-                  className={`dot ${i === activeIndex ? 'is-active' : ''}`}
-                  onClick={() => {
-                    setFocusMode(false)
-                    setActiveIndex(i)
-                  }}
-                  title={b.name}
-                />
-              ))}
-            </div>
+            {!focusMode && (
+              <div className="dots">
+                {BODIES.map((b, i) => (
+                  <button
+                    key={b.id}
+                    className={`dot ${i === activeIndex ? 'is-active' : ''}`}
+                    onClick={() => {
+                      setFocusMode(false)
+                      setActiveIndex(i)
+                    }}
+                    title={b.name}
+                  />
+                ))}
+              </div>
+            )}
 
             {!hintGone && (
               <div className="hint">
@@ -229,6 +252,13 @@ export default function App() {
               <InfoPanel body={COSMIC[cosmicFocus]} onClose={() => setCosmicFocus(null)} />
             )}
           </>
+        )}
+
+        {/* pause-animation control — appears on mouse movement while focused */}
+        {inFocus && showControls && (
+          <button className="anim-toggle" onClick={() => setPaused((p) => !p)}>
+            {paused ? '▶  Resume animation' : '⏸  Pause animation'}
+          </button>
         )}
       </div>
 
