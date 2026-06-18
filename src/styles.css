@@ -85,7 +85,8 @@ body {
 
 .tabs {
   position: absolute;
-  left: 50%;
+  /* centred over the info panel (right side), not the whole screen */
+  left: calc(100% - min(410px, 92vw) / 2);
   top: 12px;
   transform: translateX(-50%);
   display: flex;
