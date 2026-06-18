@@ -53,6 +53,7 @@ export const COSMIC = [
     photoKey: { lo: 0.1, hi: 0.3, inner: 0.35, outer: 0.62 },
     spin: 0.03,
     core: [0.51, 0.45],
+    scale: 1.5,
     name: 'Quasar',
     subtitle: 'Blazing Galactic Core',
     accent: '#ff9a4d',
