@@ -11,18 +11,39 @@ import Loader from './components/Loader.jsx'
 import { BODIES } from './data/planets.js'
 import { COSMIC } from './data/cosmicObjects.js'
 
+const STORE_KEY = 'cosmos-explorer-state'
+
+function loadState() {
+  try {
+    return JSON.parse(localStorage.getItem(STORE_KEY) || '{}')
+  } catch {
+    return {}
+  }
+}
+
 export default function App() {
-  const [section, setSection] = useState('solar') // 'solar' | 'cosmic'
+  // restore where the user left off (persisted across refresh)
+  const saved = useRef(loadState()).current
+
+  const [section, setSection] = useState(saved.section || 'solar') // 'solar' | 'cosmic'
 
   // --- solar system state ---
-  const [activeIndex, setActiveIndex] = useState(3) // start on Earth
-  const [focusMode, setFocusMode] = useState(false)
-  const [hintGone, setHintGone] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(saved.activeIndex ?? 3) // start on Earth
+  const [focusMode, setFocusMode] = useState(saved.focusMode ?? false)
+  const [hintGone, setHintGone] = useState(saved.hintGone ?? false)
 
   // --- cosmic objects state ---
-  const [cosmicFocus, setCosmicFocus] = useState(null) // index | null
+  const [cosmicFocus, setCosmicFocus] = useState(saved.cosmicFocus ?? null) // index | null
   const [hovered, setHovered] = useState(null)
-  const [cosmicHintGone, setCosmicHintGone] = useState(false)
+  const [cosmicHintGone, setCosmicHintGone] = useState(saved.cosmicHintGone ?? false)
+
+  // persist on every relevant change
+  useEffect(() => {
+    localStorage.setItem(
+      STORE_KEY,
+      JSON.stringify({ section, activeIndex, focusMode, hintGone, cosmicFocus, cosmicHintGone }),
+    )
+  }, [section, activeIndex, focusMode, hintGone, cosmicFocus, cosmicHintGone])
 
   const drag = useRef({ startX: 0, dragging: false, didDrag: false })
 

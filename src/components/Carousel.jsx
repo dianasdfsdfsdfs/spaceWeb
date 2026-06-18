@@ -29,7 +29,8 @@ function wrap(a) {
 export default function Carousel({ activeIndex, focusMode, onSelect }) {
   const groupRef = useRef()
   const planetRefs = useRef([])
-  const rot = useRef(0)
+  // start already rotated to the active planet (no scroll-to-Earth on load)
+  const rot = useRef(-activeIndex * STEP)
 
   useFrame(() => {
     // Target rotation brings the active body to the front (angle 0),
