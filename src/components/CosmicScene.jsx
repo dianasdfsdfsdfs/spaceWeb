@@ -15,8 +15,8 @@ const COMPONENTS = {
   kilonova: Kilonova,
 }
 
-const OVERVIEW_POS = new Vector3(0, 0.7, 14.5)
-const OVERVIEW_LOOK = new Vector3(0, 0.7, -4)
+const OVERVIEW_POS = new Vector3(0, 0, 15)
+const OVERVIEW_LOOK = new Vector3(0, 0, -4)
 
 // Smoothly flies the camera between the scattered overview and a focused object.
 function Rig({ focus }) {
