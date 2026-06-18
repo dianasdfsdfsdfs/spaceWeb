@@ -56,7 +56,7 @@ export const COSMIC = [
     name: 'Quasar',
     subtitle: 'Blazing Galactic Core',
     accent: '#ff9a4d',
-    position: [10.5, 2.0, -5],
+    position: [13.5, 2.0, -5],
     focusDist: 2.0,
     facts: {
       Type: 'Active galactic nucleus',
@@ -88,7 +88,7 @@ export const COSMIC = [
     name: 'Pulsar',
     subtitle: 'Spinning Neutron Star',
     accent: '#7fd0ff',
-    position: [6.5, -5.1, -5],
+    position: [11, -5.1, -5],
     focusDist: 4.2,
     scale: 1.5,
     facts: {
@@ -121,7 +121,7 @@ export const COSMIC = [
     name: 'Kilonova',
     subtitle: 'Neutron Star Collision',
     accent: '#9ad6ff',
-    position: [-6.5, -5.1, -5],
+    position: [-11, -5.1, -5],
     focusDist: 5.0,
     scale: 1.4,
     facts: {
@@ -159,7 +159,7 @@ export const COSMIC = [
     name: 'Magnetar',
     subtitle: 'Magnetic Monster Star',
     accent: '#4aa8ff',
-    position: [-10.5, 2.0, -5],
+    position: [-13.5, 2.0, -5],
     focusDist: 4.1,
     facts: {
       Type: 'Ultra-magnetic neutron star',
