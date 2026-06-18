@@ -246,7 +246,8 @@ body {
 /* ---------- Pause-animation control ---------- */
 .anim-toggle {
   position: absolute;
-  left: 50%;
+  /* centred in the area NOT covered by the info panel */
+  left: calc((100% - min(410px, 92vw)) / 2);
   bottom: 34px;
   transform: translateX(-50%);
   z-index: 16;

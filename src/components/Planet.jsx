@@ -14,7 +14,7 @@ import {
  * driven imperatively by the Carousel each frame, so we just forward a ref to
  * it. Inside, a tilt group holds the spinning sphere (+ optional rings/clouds).
  */
-const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
+const Planet = forwardRef(function Planet({ body, index, onSelect, onObjectHover }, ref) {
   const spinRef = useRef()
 
   const map = useLoader(TextureLoader, body.texture)
@@ -74,6 +74,7 @@ const Planet = forwardRef(function Planet({ body, index, onSelect }, ref) {
             }}
             onPointerOver={() => (document.body.style.cursor = 'pointer')}
             onPointerOut={() => (document.body.style.cursor = 'default')}
+            onPointerMove={() => onObjectHover?.()}
           >
             <sphereGeometry args={[r, 64, 64]} />
             {body.isStar ? (

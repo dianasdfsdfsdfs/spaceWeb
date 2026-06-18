@@ -52,7 +52,7 @@ function Rig({ focus }) {
   return null
 }
 
-export default function CosmicScene({ focus, onSelect, onHover }) {
+export default function CosmicScene({ focus, onSelect, onHover, onObjectHover }) {
   return (
     <>
       <PerspectiveCamera makeDefault fov={50} position={[0, 1, 13]} near={0.1} far={300} />
@@ -82,6 +82,7 @@ export default function CosmicScene({ focus, onSelect, onHover }) {
                 onHover(i)
                 document.body.style.cursor = 'pointer'
               }}
+              onPointerMove={() => onObjectHover?.()}
               onPointerOut={() => {
                 onHover(null)
                 document.body.style.cursor = 'default'

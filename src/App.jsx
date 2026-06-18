@@ -123,7 +123,6 @@ export default function App() {
     drag.current = { startX: e.clientX, dragging: true, didDrag: false }
   }
   const onPointerMove = (e) => {
-    revealControls()
     if (section !== 'solar') return
     const d = drag.current
     if (!d.dragging || d.didDrag) return
@@ -176,10 +175,20 @@ export default function App() {
             {section === 'solar' ? (
               <>
                 <PerspectiveCamera makeDefault position={[0, 0.6, 8.5]} fov={42} />
-                <Carousel activeIndex={activeIndex} focusMode={focusMode} onSelect={handleSelect} />
+                <Carousel
+                  activeIndex={activeIndex}
+                  focusMode={focusMode}
+                  onSelect={handleSelect}
+                  onObjectHover={revealControls}
+                />
               </>
             ) : (
-              <CosmicScene focus={cosmicFocus} onSelect={selectCosmic} onHover={setHovered} />
+              <CosmicScene
+                focus={cosmicFocus}
+                onSelect={selectCosmic}
+                onHover={setHovered}
+                onObjectHover={revealControls}
+              />
             )}
           </Suspense>
 
@@ -256,7 +265,12 @@ export default function App() {
 
         {/* pause-animation control — appears on mouse movement while focused */}
         {inFocus && showControls && (
-          <button className="anim-toggle" onClick={() => setPaused((p) => !p)}>
+          <button
+            className="anim-toggle"
+            onClick={() => setPaused((p) => !p)}
+            onMouseEnter={() => clearTimeout(hideTimer.current)}
+            onMouseLeave={revealControls}
+          >
             {paused ? '▶  Resume animation' : '⏸  Pause animation'}
           </button>
         )}

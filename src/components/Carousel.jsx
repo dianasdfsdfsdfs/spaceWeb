@@ -26,7 +26,7 @@ function wrap(a) {
   return a
 }
 
-export default function Carousel({ activeIndex, focusMode, onSelect }) {
+export default function Carousel({ activeIndex, focusMode, onSelect, onObjectHover }) {
   const groupRef = useRef()
   const planetRefs = useRef([])
   // start already rotated to the active planet (no scroll-to-Earth on load)
@@ -100,6 +100,7 @@ export default function Carousel({ activeIndex, focusMode, onSelect }) {
           body={body}
           index={i}
           onSelect={onSelect}
+          onObjectHover={onObjectHover}
           ref={(el) => (planetRefs.current[i] = el)}
         />
       ))}
