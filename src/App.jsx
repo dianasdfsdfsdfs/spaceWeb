@@ -200,6 +200,7 @@ export default function App() {
                 onSelect={selectCosmic}
                 onHover={setHovered}
                 onObjectHover={revealControls}
+                isMobile={isMobile}
               />
             )}
           </Suspense>
