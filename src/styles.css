@@ -84,6 +84,14 @@ body {
 }
 
 .tabs {
+  position: absolute;
+  /* one line, centred horizontally over the (right-side) info-panel area, just
+     below where the panel's close button sits — stays put whether the panel is
+     open or not */
+  top: 62px;
+  left: calc(100% - min(410px, 92vw) / 2);
+  transform: translateX(-50%);
+  width: max-content;
   display: flex;
   gap: 6px;
   background: var(--panel);
@@ -92,13 +100,6 @@ body {
   padding: 7px 8px;
   backdrop-filter: blur(14px);
   pointer-events: auto;
-}
-/* when an info panel is open, centre the tabs horizontally over that panel */
-.tabs.over-panel {
-  position: absolute;
-  top: 10px;
-  left: calc(100% - min(410px, 92vw) / 2);
-  transform: translateX(-50%);
 }
 
 .tab {
@@ -340,7 +341,7 @@ body {
   /* small blur only on a GPU layer -> smooth scrolling */
   backdrop-filter: blur(6px);
   box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
-  padding: 104px 34px 48px;
+  padding: 116px 34px 48px;
   overflow-y: auto;
   overscroll-behavior: contain;
   user-select: text;
@@ -376,8 +377,8 @@ body {
 
 .info-close {
   position: absolute;
-  top: 70px;
-  right: 24px;
+  top: 18px;
+  left: 24px;
   width: 36px;
   height: 36px;
   border-radius: 50%;

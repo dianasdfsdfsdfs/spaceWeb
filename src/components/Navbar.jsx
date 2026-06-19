@@ -3,14 +3,14 @@ const TABS = [
   { id: 'cosmic', label: 'Cosmic Objects' },
 ]
 
-export default function Navbar({ active = 'solar', onSelect, panelOpen = false }) {
+export default function Navbar({ active = 'solar', onSelect }) {
   return (
     <header className="navbar">
       <div className="brand">
         <span className="brand-mark">◍</span>
         <span className="brand-name">COSMOS<span>EXPLORER</span></span>
       </div>
-      <nav className={`tabs ${panelOpen ? 'over-panel' : ''}`}>
+      <nav className="tabs">
         {TABS.map((t) => (
           <button
             key={t.id}
