@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { PerspectiveCamera } from '@react-three/drei'
-import { Vector3 } from 'three'
+import { Vector3, MathUtils } from 'three'
 import { COSMIC } from '../data/cosmicObjects.js'
 import BlackHole from './cosmic/BlackHole.jsx'
 import Pulsar from './cosmic/Pulsar.jsx'
@@ -19,60 +19,77 @@ const COMPONENTS = {
 const OVERVIEW_POS = new Vector3(0, 0, 15)
 const OVERVIEW_LOOK = new Vector3(0, 0, -4)
 
-// Phone: the scattered grid can't fit a portrait screen, so we lay the objects
-// out in a straight horizontal row and turn it into a swipe carousel — the
-// camera centres on one object at a time (like the planet carousel).
+// Phone: a swipe carousel — one object centred at a time (like the planets).
+// Objects live in a straight row, but we place each at its nearest "copy"
+// relative to the camera centre (period = whole row), so wrapping from the last
+// object to the first happens OFF-SCREEN and always moves the short way → an
+// endless loop in either direction.
+const N = COSMIC.length
 const MOBILE_GAP = 9 // spacing between objects in the row
 const MOBILE_Z = -5
-const mobilePos = (i) => [i * MOBILE_GAP, 0, MOBILE_Z]
+const PERIOD = N * MOBILE_GAP
 const BROWSE_MULT = 2.8 // how far back we sit while browsing (comfortable frame)
 const FOCUS_MULT = 2.1 // closer when focused (still small enough to fit the top half)
 
-// Smoothly flies the camera: phone = pan along the row / fly into focus;
+// nearest periodic copy of `home` to `ref`
+const nearest = (home, ref) => home + Math.round((ref - home) / PERIOD) * PERIOD
+
+// Smoothly flies the camera: phone = endless pan along the row / fly into focus;
 // desktop = scattered overview / fly into focus.
-function Rig({ focus, cosmicIndex, positions, isMobile }) {
+function Rig({ focus, cosmicIndex, positions, groupRefs, isMobile }) {
   const cam = useThree((s) => s.camera)
   const size = useThree((s) => s.size)
   const look = useRef((isMobile ? new Vector3(0, 0, MOBILE_Z) : OVERVIEW_LOOK).clone())
   const dPos = useRef(new Vector3())
   const dLook = useRef(new Vector3())
+  // phone carousel: smoothed camera centre / distance / vertical aim
+  const camX = useRef(cosmicIndex * MOBILE_GAP)
+  const camZ = useRef(MOBILE_Z + COSMIC[cosmicIndex].focusDist * BROWSE_MULT)
+  const lookY = useRef(0)
 
   useFrame(() => {
     const tanHalfFov = Math.tan((cam.fov * Math.PI) / 360)
 
-    if (focus != null) {
-      const o = COSMIC[focus]
-      const p = positions[focus]
-      if (isMobile) {
-        // object is centred horizontally; pull back a touch and aim below it so
-        // it sits in the top half, above the info bottom-sheet.
-        const fd = o.focusDist * FOCUS_MULT
-        const offY = 0.5 * tanHalfFov * fd // centre the object ~quarter from the top
-        dPos.current.set(p[0], p[1], p[2] + fd)
-        dLook.current.set(p[0], p[1] - offY, p[2])
-      } else {
-        // Aim right of the object by half the side-panel's angular width so it
-        // sits centred in the screen area NOT covered by the panel.
-        const panelW = Math.min(410, size.width * 0.92)
-        const offX = (o.focusDist * tanHalfFov * panelW) / size.height
-        const lift = o.focusLift || 0
-        dPos.current.set(p[0], p[1], p[2] + o.focusDist)
-        dLook.current.set(p[0] + offX, p[1] - lift, p[2])
-      }
-    } else if (isMobile) {
-      // browse: centre on the current object in the row
+    if (isMobile) {
       const o = COSMIC[cosmicIndex]
-      const p = positions[cosmicIndex]
-      const bd = o.focusDist * BROWSE_MULT
-      dPos.current.set(p[0], p[1], p[2] + bd)
-      dLook.current.set(p[0], p[1], p[2])
-    } else {
-      dPos.current.copy(OVERVIEW_POS)
-      dLook.current.copy(OVERVIEW_LOOK)
+      // pan the short way to the current object (endless loop)
+      const target = nearest(cosmicIndex * MOBILE_GAP, camX.current)
+      camX.current = MathUtils.lerp(camX.current, target, focus != null ? 0.1 : 0.12)
+
+      // place every object at its nearest copy to the camera (wrap off-screen)
+      groupRefs.current.forEach((g, i) => {
+        if (g) g.position.x = nearest(i * MOBILE_GAP, camX.current)
+      })
+
+      // distance + vertical aim: when focused, pull a little closer and aim
+      // below the object so it sits in the top half, above the info sheet.
+      const fd = o.focusDist * (focus != null ? FOCUS_MULT : BROWSE_MULT)
+      const targetZ = MOBILE_Z + fd
+      const targetLookY = focus != null ? -0.5 * tanHalfFov * fd : 0
+      camZ.current = MathUtils.lerp(camZ.current, targetZ, focus != null ? 0.08 : 0.1)
+      lookY.current = MathUtils.lerp(lookY.current, targetLookY, 0.12)
+
+      cam.position.set(camX.current, 0, camZ.current)
+      cam.lookAt(camX.current, lookY.current, MOBILE_Z)
+      return
     }
 
-    // snappier while browsing the phone carousel; gentle ease elsewhere
-    const k = focus != null ? 0.05 : isMobile ? 0.1 : 0.025
+    // ---- desktop ----
+    if (focus == null) {
+      dPos.current.copy(OVERVIEW_POS)
+      dLook.current.copy(OVERVIEW_LOOK)
+    } else {
+      const o = COSMIC[focus]
+      const p = positions[focus]
+      // Aim right of the object by half the side-panel's angular width so it
+      // sits centred in the screen area NOT covered by the panel.
+      const panelW = Math.min(410, size.width * 0.92)
+      const offX = (o.focusDist * tanHalfFov * panelW) / size.height
+      const lift = o.focusLift || 0
+      dPos.current.set(p[0], p[1], p[2] + o.focusDist)
+      dLook.current.set(p[0] + offX, p[1] - lift, p[2])
+    }
+    const k = focus == null ? 0.025 : 0.05
     cam.position.lerp(dPos.current, k)
     look.current.lerp(dLook.current, k)
     cam.lookAt(look.current)
@@ -82,7 +99,8 @@ function Rig({ focus, cosmicIndex, positions, isMobile }) {
 }
 
 export default function CosmicScene({ focus, cosmicIndex = 0, onSelect, onHover, onObjectHover, isMobile }) {
-  const positions = isMobile ? COSMIC.map((_, i) => mobilePos(i)) : COSMIC.map((o) => o.position)
+  const positions = COSMIC.map((o) => o.position)
+  const groupRefs = useRef([])
 
   const startPos = isMobile
     ? [cosmicIndex * MOBILE_GAP, 0, MOBILE_Z + COSMIC[cosmicIndex].focusDist * BROWSE_MULT]
@@ -91,12 +109,31 @@ export default function CosmicScene({ focus, cosmicIndex = 0, onSelect, onHover,
   return (
     <>
       <PerspectiveCamera makeDefault fov={50} position={startPos} near={0.1} far={300} />
-      <Rig focus={focus} cosmicIndex={cosmicIndex} positions={positions} isMobile={isMobile} />
+      <Rig
+        focus={focus}
+        cosmicIndex={cosmicIndex}
+        positions={positions}
+        groupRefs={groupRefs}
+        isMobile={isMobile}
+      />
 
       {COSMIC.map((o, i) => {
         const C = COMPONENTS[o.type]
         return (
-          <group key={o.id} position={positions[i]} scale={o.scale || 1}>
+          <group
+            key={o.id}
+            // desktop: fixed scattered position. phone: the Rig positions it
+            // imperatively each frame, so we seed the row position once on mount.
+            ref={(el) => {
+              groupRefs.current[i] = el
+              if (el && isMobile && el.userData.seeded === undefined) {
+                el.position.set(i * MOBILE_GAP, 0, MOBILE_Z)
+                el.userData.seeded = true
+              }
+            }}
+            position={isMobile ? undefined : positions[i]}
+            scale={o.scale || 1}
+          >
             {/* Visuals carry NO event handlers, so clicks fall through to the
                 canvas' onPointerMissed (which exits focus). */}
             {o.image ? (
