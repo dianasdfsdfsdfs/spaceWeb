@@ -138,7 +138,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Navbar active={section} onSelect={goSection} />
+      <Navbar active={section} onSelect={goSection} panelOpen={inFocus} />
 
       <div
         className="stage"

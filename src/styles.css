@@ -93,6 +93,13 @@ body {
   backdrop-filter: blur(14px);
   pointer-events: auto;
 }
+/* when an info panel is open, centre the tabs horizontally over that panel */
+.tabs.over-panel {
+  position: absolute;
+  top: 10px;
+  left: calc(100% - min(410px, 92vw) / 2);
+  transform: translateX(-50%);
+}
 
 .tab {
   position: relative;
