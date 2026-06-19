@@ -34,6 +34,7 @@ export default function App() {
 
   // --- cosmic objects state ---
   const [cosmicFocus, setCosmicFocus] = useState(saved.cosmicFocus ?? null) // index | null
+  const [cosmicIndex, setCosmicIndex] = useState(saved.cosmicIndex ?? 0) // centred object on phone carousel
   const [hovered, setHovered] = useState(null)
   const [cosmicHintGone, setCosmicHintGone] = useState(saved.cosmicHintGone ?? false)
 
@@ -74,9 +75,17 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(
       STORE_KEY,
-      JSON.stringify({ section, activeIndex, focusMode, hintGone, cosmicFocus, cosmicHintGone }),
+      JSON.stringify({
+        section,
+        activeIndex,
+        focusMode,
+        hintGone,
+        cosmicFocus,
+        cosmicIndex,
+        cosmicHintGone,
+      }),
     )
-  }, [section, activeIndex, focusMode, hintGone, cosmicFocus, cosmicHintGone])
+  }, [section, activeIndex, focusMode, hintGone, cosmicFocus, cosmicIndex, cosmicHintGone])
 
   const drag = useRef({ startX: 0, dragging: false, didDrag: false })
 
@@ -107,8 +116,16 @@ export default function App() {
   }
 
   // --- cosmic handlers ---
-  const selectCosmic = (i) => {
+  // phone: flip between objects (swipe carousel, like the planets)
+  const changeCosmic = (dir) => {
     setCosmicHintGone(true)
+    setCosmicIndex((i) => (i + dir + COSMIC.length) % COSMIC.length)
+  }
+
+  const selectCosmic = (i) => {
+    if (drag.current.didDrag) return // ignore the click that ends a swipe
+    setCosmicHintGone(true)
+    setCosmicIndex(i)
     setCosmicFocus(i)
   }
 
@@ -122,25 +139,31 @@ export default function App() {
         if (e.key === 'ArrowRight') change(1)
         else if (e.key === 'ArrowLeft') change(-1)
         else if (e.key === 'Enter' || e.key === ' ') setFocusMode(true)
+      } else if (section === 'cosmic' && isMobile && cosmicFocus == null) {
+        if (e.key === 'ArrowRight') changeCosmic(1)
+        else if (e.key === 'ArrowLeft') changeCosmic(-1)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [section])
+  }, [section, isMobile, cosmicFocus])
 
-  // pointer drag = swipe (solar only)
+  // pointer drag = swipe: planets always; cosmic objects only on the phone carousel
+  const canSwipe =
+    section === 'solar' || (section === 'cosmic' && isMobile && cosmicFocus == null)
   const onPointerDown = (e) => {
-    if (section !== 'solar') return
+    if (!canSwipe) return
     drag.current = { startX: e.clientX, dragging: true, didDrag: false }
   }
   const onPointerMove = (e) => {
-    if (section !== 'solar') return
+    if (!canSwipe) return
     const d = drag.current
     if (!d.dragging || d.didDrag) return
     const dx = e.clientX - d.startX
     if (Math.abs(dx) > 55) {
       d.didDrag = true
-      change(dx > 0 ? 1 : -1)
+      if (section === 'solar') change(dx > 0 ? 1 : -1)
+      else changeCosmic(dx > 0 ? 1 : -1)
     }
   }
   const onPointerUp = () => {
@@ -197,6 +220,7 @@ export default function App() {
             ) : (
               <CosmicScene
                 focus={cosmicFocus}
+                cosmicIndex={cosmicIndex}
                 onSelect={selectCosmic}
                 onHover={setHovered}
                 onObjectHover={revealControls}
@@ -262,11 +286,51 @@ export default function App() {
         {/* ---------- COSMIC HUD ---------- */}
         {section === 'cosmic' && (
           <>
-            {cosmicFocus == null && hovered != null && (
+            {/* PHONE: swipe carousel — one object at a time, like the planets */}
+            {isMobile && cosmicFocus == null && (
+              <>
+                <button
+                  className="nav-arrow left"
+                  onClick={() => changeCosmic(-1)}
+                  aria-label="Previous"
+                >
+                  ‹
+                </button>
+                <button
+                  className="nav-arrow right"
+                  onClick={() => changeCosmic(1)}
+                  aria-label="Next"
+                >
+                  ›
+                </button>
+
+                <div className="title-card">
+                  <p className="title-eyebrow">{COSMIC[cosmicIndex].subtitle}</p>
+                  <h1>{COSMIC[cosmicIndex].name}</h1>
+                  <button className="details-btn" onClick={() => selectCosmic(cosmicIndex)}>
+                    View details ▸
+                  </button>
+                </div>
+
+                <div className="dots">
+                  {COSMIC.map((b, i) => (
+                    <button
+                      key={b.id}
+                      className={`dot ${i === cosmicIndex ? 'is-active' : ''}`}
+                      onClick={() => setCosmicIndex(i)}
+                      title={b.name}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* DESKTOP: hover label + hint over the scattered field */}
+            {!isMobile && cosmicFocus == null && hovered != null && (
               <div className="hover-name">{COSMIC[hovered].name}</div>
             )}
 
-            {cosmicFocus == null && !cosmicHintGone && (
+            {!isMobile && cosmicFocus == null && !cosmicHintGone && (
               <div className="hint">Click an object to fly in and explore it · Esc to come back</div>
             )}
 
