@@ -84,11 +84,6 @@ body {
 }
 
 .tabs {
-  position: absolute;
-  /* centred over the info panel (right side), not the whole screen */
-  left: calc(100% - min(410px, 92vw) / 2);
-  top: 12px;
-  transform: translateX(-50%);
   display: flex;
   gap: 6px;
   background: var(--panel);
@@ -348,9 +343,6 @@ body {
   will-change: transform;
   animation: slideIn 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.info-panel {
-  padding-top: 64px;
-}
 
 /* slim, smooth custom scrollbar */
 .info-panel::-webkit-scrollbar {
@@ -377,8 +369,8 @@ body {
 
 .info-close {
   position: absolute;
-  top: 18px;
-  left: 24px;
+  top: 70px;
+  right: 24px;
   width: 36px;
   height: 36px;
   border-radius: 50%;
