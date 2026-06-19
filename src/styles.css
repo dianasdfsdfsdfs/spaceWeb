@@ -538,9 +538,54 @@ body {
   font-size: 14px;
 }
 
-/* ---------- Responsive ---------- */
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ---------- Responsive (phones) ---------- */
 @media (max-width: 720px) {
-  .tabs { display: none; }
+  /* the tab switcher moves to the top centre (info is now a bottom sheet) */
+  .tabs {
+    top: 56px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+
+  /* while the info sheet is open, free the top + sides */
+  .app:has(.info-panel) .tabs,
+  .app:has(.info-panel) .nav-arrow {
+    display: none;
+  }
+
+  /* info panel becomes a scrollable bottom sheet */
+  .info-panel {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 50vh;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    border-top-left-radius: 22px;
+    border-top-right-radius: 22px;
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.55);
+    padding: 26px 22px 36px;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* close button to the sheet's top-right corner */
+  .info-close {
+    top: 14px;
+    right: 16px;
+    left: auto;
+  }
+
+  /* the hover pause control gets in the way of the sheet on touch — hide it */
+  .anim-toggle { display: none; }
+
   .title-card h1 { font-size: 32px; }
   .nav-arrow { width: 46px; height: 46px; font-size: 24px; }
 }

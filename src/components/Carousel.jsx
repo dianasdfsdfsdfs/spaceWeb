@@ -26,7 +26,7 @@ function wrap(a) {
   return a
 }
 
-export default function Carousel({ activeIndex, focusMode, onSelect, onObjectHover }) {
+export default function Carousel({ activeIndex, focusMode, onSelect, onObjectHover, isMobile }) {
   const groupRef = useRef()
   const planetRefs = useRef([])
   // start already rotated to the active planet (no scroll-to-Earth on load)
@@ -39,14 +39,19 @@ export default function Carousel({ activeIndex, focusMode, onSelect, onObjectHov
     let target = rot.current + wrap(desired - rot.current)
     rot.current = MathUtils.lerp(rot.current, target, 0.12)
 
+    // On phones the portrait viewport makes the front planet huge, so we show
+    // it ~2x smaller and lift the whole ring up (info opens as a bottom sheet).
+    const focusSize = isMobile ? 0.52 : FOCUS
+    const clickBoost = isMobile ? 1.0 : CLICK_BOOST
+
     if (groupRef.current) {
       groupRef.current.rotation.y = rot.current
-      // shift the ring left when the info panel is open so the NEXT planet
-      // (which flies in from the right) clears the panel and stays visible
-      const targetX = focusMode ? -1.2 : 0
-      // and lift it up a bit so the (now larger) focused planet isn't cut off
-      // at the bottom of the screen
-      const targetY = focusMode ? 0.3 : 0
+      // desktop: shift the ring left so the NEXT planet clears the side panel.
+      // mobile: no horizontal shift (panel is a bottom sheet).
+      const targetX = isMobile ? 0 : focusMode ? -1.2 : 0
+      // lift the ring up so the focused planet isn't cut off. on mobile we lift
+      // it higher when the info sheet opens so the planet sits above the sheet.
+      const targetY = isMobile ? (focusMode ? 1.15 : 0.6) : focusMode ? 0.3 : 0
       groupRef.current.position.x = MathUtils.lerp(
         groupRef.current.position.x,
         targetX,
@@ -76,9 +81,9 @@ export default function Carousel({ activeIndex, focusMode, onSelect, onObjectHov
       const bgApparent =
         BG_BASE * Math.pow(vr, BG_EXP) * (BG_DEPTH_MIN + (1 - BG_DEPTH_MIN) * depth)
       // the front/focused body reaches one big uniform size for all planets
-      let apparent = bgApparent + (FOCUS - bgApparent) * focusBlend
+      let apparent = bgApparent + (focusSize - bgApparent) * focusBlend
 
-      if (focusMode && isActive) apparent *= CLICK_BOOST // grow a bit when opened
+      if (focusMode && isActive) apparent *= clickBoost // grow a bit when opened
       if (focusMode && !isActive) apparent *= 0.9 // keep neighbours clearly visible
 
       const targetScale = apparent / vr

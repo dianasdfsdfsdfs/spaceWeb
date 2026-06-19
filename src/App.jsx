@@ -45,6 +45,17 @@ export default function App() {
   const [showControls, setShowControls] = useState(false)
   const hideTimer = useRef()
 
+  // phone layout: smaller focused planets + bottom-sheet info panel
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 720px)').matches,
+  )
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 720px)')
+    const onChange = (e) => setIsMobile(e.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
   const inFocus =
     (section === 'solar' && focusMode) || (section === 'cosmic' && cosmicFocus != null)
 
@@ -180,6 +191,7 @@ export default function App() {
                   focusMode={focusMode}
                   onSelect={handleSelect}
                   onObjectHover={revealControls}
+                  isMobile={isMobile}
                 />
               </>
             ) : (
